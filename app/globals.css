@@ -1,26 +1,70 @@
-@import "tailwindcss";
+@import 'tailwindcss/preflight';
+@import 'tailwindcss';
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-sans: var(--font-pretendard);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #1e1e1e;
+  --foreground: #d4d4d4;
+  --background-light: #252526;
+  --foreground-light: #e8e8e8;
+  --foreground-dim: #a9a9a9;
+  --border: #474747;
+  --active: #007acc;
+  --hover: #2a2d2e;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* 타이포그래피 클래스 커스텀 스타일 보완 */
+.typo-head1,
+.typo-head2,
+.typo-head3,
+.typo-head4 {
+  color: var(--foreground-light);
+}
+
+.typo-body1,
+.typo-body2 {
+  color: var(--foreground);
+}
+
+.typo-caption1,
+.typo-caption2,
+.typo-small {
+  color: var(--foreground-dim);
+}
+
+/* 선택 스타일 */
+::selection {
+  background-color: #264f78;
+  color: #ffffff;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
 }
