@@ -1,23 +1,24 @@
 import { z } from "zod";
 import { createApiResponseSchema } from "./generic.schema";
 
-export const proposalCommonFieldsSchema = z.object({
+export const proposalBaseSchema = z.object({
   title: z.string(),
   description: z.string(),
 });
 
-export const proposalItemSchema = proposalCommonFieldsSchema.extend({
+export const proposalItemSchema = proposalBaseSchema.extend({
   id: z.number(),
 });
 
 // 제안서 목록
 export const proposalListSchema = z.array(proposalItemSchema);
 
-export const proposalRequestSchema = proposalCommonFieldsSchema;
+// 제안서 요청 스케마
+export const proposalRequestSchema = proposalBaseSchema;
 
-export const proposalFieldsResponseSchema = createApiResponseSchema(
-  proposalCommonFieldsSchema
-);
+// 제안서 응답 스케마
+export const proposalFieldsResponseSchema =
+  createApiResponseSchema(proposalBaseSchema);
 
 export const getProposalItemResponseSchema =
   createApiResponseSchema(proposalItemSchema);
@@ -25,7 +26,7 @@ export const getProposalItemResponseSchema =
 export const getProposalListResponseSchema =
   createApiResponseSchema(proposalListSchema);
 
-export type ProposalCommonFields = z.infer<typeof proposalCommonFieldsSchema>;
+export type ProposalCommonFields = z.infer<typeof proposalBaseSchema>;
 export type ProposalItem = z.infer<typeof proposalItemSchema>;
 export type ProposalRequest = z.infer<typeof proposalRequestSchema>;
 export type ProposalFieldsResponse = z.infer<
