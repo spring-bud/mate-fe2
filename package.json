@@ -11,15 +11,16 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.69.0",
+    "autoprefixer": "^10.4.20",
     "framer-motion": "^12.6.2",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zod": "^3.24.2",
-    "autoprefixer": "^10.4.20"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.69.0",
     "@testing-library/jest-dom": "^6.6.3",
