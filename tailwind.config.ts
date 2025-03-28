@@ -10,18 +10,12 @@ const config: Config = {
   darkMode: 'class', // 'class' 또는 'media'
   theme: {
     screens: {
-      sm: {
-        min: '320px',
-        max: '743px',
-      },
-      md: {
-        min: '744px',
-        max: '1339px',
-      },
-      lg: {
-        min: '1340px',
-      },
-      short: { raw: '(max-height: 900px)' },
+      xs: '320px', // 모바일 작은 화면
+      sm: '640px', // 모바일
+      md: '768px', // 태블릿
+      lg: '1024px', // 작은 데스크톱
+      xl: '1280px', // 일반 데스크톱
+      '2xl': '1340px', // 큰 데스크톱
     },
     extend: {
       fontFamily: {

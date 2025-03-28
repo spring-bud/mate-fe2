@@ -1,7 +1,6 @@
-@import 'tailwindcss/preflight';
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
-
 :root {
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-jetbrains-mono);

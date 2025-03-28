@@ -1,6 +1,6 @@
 // app/__tests__/Home.test.tsx
 import { render, screen } from '@testing-library/react';
-import Home from '../page';
+import Home from '../(home)/page';
 
 describe('Home page', () => {
   it('renders Next.js logo', () => {
