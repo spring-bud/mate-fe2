@@ -16,6 +16,7 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'warn', // 오류를 경고로 변경
       'react-hooks/exhaustive-deps': 'warn', // useEffect 의존성 경고로 설정
       '@next/next/no-img-element': 'warn', // img 태그 관련 경고로 설정
+      '@typescript-eslint/no-explicit-any': 'off', // any 타입 허용
     },
   },
 ];
