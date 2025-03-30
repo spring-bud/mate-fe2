@@ -42,3 +42,7 @@ next-env.d.ts
 
 # SWC compilation cache
 .swc/
+
+# key
+/localhost-key.pem
+/localhost.pem
