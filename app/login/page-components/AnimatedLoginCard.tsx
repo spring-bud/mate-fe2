@@ -83,9 +83,9 @@ export default function AnimatedLoginCard({ authURL }: AnimatedLoginCardProps) {
           <Link href="/policy/service" className="text-active hover:underline">
             이용약관
           </Link>
-          과
+          과 &nbsp;
           <Link href="/policy/privacy" className="text-active hover:underline">
-            &nbsp; 개인정보 처리방침
+            개인정보 처리방침
           </Link>
           에 동의합니다.
         </p>
