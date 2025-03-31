@@ -79,13 +79,13 @@ export default function AnimatedLoginCard({ authURL }: AnimatedLoginCardProps) {
         variants={itemVariants}
       >
         <p className="typo-caption1 text-textDim">
-          로그인함으로써 MATE의{" "}
+          MATE의 &nbsp;
           <Link href="/policy/service" className="text-active hover:underline">
             이용약관
           </Link>
           과
           <Link href="/policy/privacy" className="text-active hover:underline">
-            개인정보 처리방침
+            &nbsp; 개인정보 처리방침
           </Link>
           에 동의합니다.
         </p>
