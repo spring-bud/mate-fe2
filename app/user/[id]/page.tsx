@@ -1,8 +1,8 @@
 // app/user/[id]/page.tsx
-import React from "react";
-import { notFound } from "next/navigation";
-import UserProfileContainer from "@/components/user/UserProfileContainer";
-import { mockUserData, mockUserPosts, mockUserReviews } from "@/mock/userData";
+import React from 'react';
+import { notFound } from 'next/navigation';
+import UserProfileContainer from '@/app/user/[id]/page-components/UserProfileContainer';
+import { mockUserData, mockUserPosts, mockUserReviews } from '@/mock/userData';
 
 // 유저의 상세 소개 내용 (Tiptap HTML 형식)
 const detailedIntroContent = `
