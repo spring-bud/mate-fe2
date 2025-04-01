@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import MobileFreelancerCard from "./MobileFreelancerCard";
+import Image from "next/image";
 
 // 샘플 인기 프리랜서 데이터
 const popularFreelancers = [
@@ -93,8 +94,10 @@ export default function PopularFreelancersSection() {
                 className="bg-bgLight p-5 sm:p-6 rounded-lg border border-border hover:border-active hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-start gap-4">
-                  <img
+                  <Image
                     src={freelancer.image}
+                    width={80}
+                    height={80}
                     alt={freelancer.name}
                     className="w-14 sm:w-16 h-14 sm:h-16 rounded-full object-cover border-2 border-selection"
                   />

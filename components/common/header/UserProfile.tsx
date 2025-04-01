@@ -19,6 +19,8 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = ({
   isLoggedIn,
   userName = "사용자",
+  // mock 제거하고 해당 코드 수정
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userImageUrl,
 }) => {
   // 로그인하지 않은 경우 로그인 버튼 표시

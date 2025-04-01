@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface Freelancer {
   id: number;
@@ -49,8 +50,10 @@ const MobileFreelancerCard: React.FC<MobileFreelancerCardProps> = ({
       className="bg-bgLight p-3 rounded-lg border border-border hover:border-active transition-all duration-300"
     >
       <div className="flex items-center gap-3">
-        <img
+        <Image
           src={freelancer.image}
+          width={80}
+          height={80}
           alt={freelancer.name}
           className="w-10 h-10 rounded-full object-cover border-2 border-selection"
         />

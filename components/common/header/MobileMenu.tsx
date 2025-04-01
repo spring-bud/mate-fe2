@@ -18,6 +18,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const navItems = [
     { href: "/product", label: "Product" },
     { href: "/freelancer", label: "Freelancer" },
+    { href: "/help", label: "Help" },
   ];
 
   // 경로가 변경되었을 때만 메뉴를 닫도록 수정

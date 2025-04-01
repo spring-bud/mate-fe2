@@ -31,6 +31,7 @@ const Navigation: React.FC = () => {
   const navItems = [
     { href: "/product", label: "Product" },
     { href: "/freelancer", label: "Freelancer" },
+    { href: "/help", label: "Help" },
   ];
 
   return (
