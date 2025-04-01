@@ -96,6 +96,8 @@ export default function PopularFreelancersSection() {
                 <div className="flex items-start gap-4">
                   <Image
                     src={freelancer.image}
+                    width={80}
+                    height={80}
                     alt={freelancer.name}
                     className="w-14 sm:w-16 h-14 sm:h-16 rounded-full object-cover border-2 border-selection"
                   />
