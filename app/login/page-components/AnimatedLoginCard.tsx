@@ -55,7 +55,7 @@ export default function AnimatedLoginCard({ authURL }: AnimatedLoginCardProps) {
       {/* 로그인 섹션 */}
       <motion.div variants={itemVariants} className='space-y-6'>
         <Link
-          href={'http://localhost:8080/oauth2/authorization/kakao'}
+          href={authURL}
           className='flex items-center justify-center w-full bg-[#FEE500] hover:bg-[#F5DC00] transition-colors py-3 px-4 rounded-md'
         >
           <svg
