@@ -46,3 +46,6 @@ next-env.d.ts
 # key
 /localhost-key.pem
 /localhost.pem
+
+# http
+test.http
