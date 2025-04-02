@@ -1,5 +1,8 @@
+// tailwind.config.ts
 import type { Config } from 'tailwindcss';
+import type { PluginAPI } from 'tailwindcss/types/config';
 import plugin from 'tailwindcss/plugin';
+import typography from '@tailwindcss/typography';
 
 const config: Config = {
   content: [
@@ -49,26 +52,109 @@ const config: Config = {
         warning: '#CCA700', // 경고
         error: '#F14C4C', // 오류
         success: '#89D185', // 성공
-        // 코드 색상
-        comment: '#6A9955', // 주석
-        keyword: '#569CD6', // 키워드
-        string: '#CE9178', // 문자열
-        function: '#DCDCAA', // 함수
-        variable: '#9CDCFE', // 변수
-        type: '#4EC9B0', // 타입
+        // 에디터 추가 색상
+        placeholder: '#6A9955', // 플레이스홀더 색상
       },
-      boxShadow: {
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        DEFAULT:
-          '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        code: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.1)',
-      },
+      typography: ({ theme }: { theme: (path: string) => string }) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.textPrimary'),
+            a: {
+              color: theme('colors.active'),
+              '&:hover': {
+                color: theme('colors.blue.600'),
+              },
+            },
+            h1: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            h2: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            h3: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            h4: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            h5: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            h6: {
+              color: theme('colors.textLight'),
+              fontWeight: '600',
+            },
+            strong: {
+              color: theme('colors.textLight'),
+            },
+            code: {
+              color: theme('colors.textLight'),
+              backgroundColor: theme('colors.bgDark'),
+              paddingLeft: '4px',
+              paddingRight: '4px',
+              paddingTop: '2px',
+              paddingBottom: '2px',
+              borderRadius: '0.25rem',
+            },
+            blockquote: {
+              color: theme('colors.textDim'),
+              borderLeftColor: theme('colors.border'),
+            },
+            'ul > li::before': {
+              backgroundColor: theme('colors.textDim'),
+            },
+            'ol > li::before': {
+              color: theme('colors.textDim'),
+            },
+            hr: {
+              borderColor: theme('colors.border'),
+            },
+            table: {
+              borderColor: theme('colors.border'),
+            },
+            thead: {
+              color: theme('colors.textLight'),
+              borderBottomColor: theme('colors.border'),
+            },
+            'tbody tr': {
+              borderBottomColor: theme('colors.border'),
+            },
+          },
+        },
+        invert: {
+          css: {
+            color: theme('colors.textPrimary'),
+            a: {
+              color: theme('colors.active'),
+              '&:hover': {
+                color: theme('colors.blue.600'),
+              },
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [
-    plugin(function ({ addUtilities }) {
+    typography,
+    plugin(({ addBase, theme }: PluginAPI) => {
+      addBase({
+        '.ProseMirror p.is-editor-empty:first-child::before': {
+          content: 'attr(data-placeholder)',
+          color: theme('colors.placeholder'),
+          float: 'left',
+          pointerEvents: 'none',
+          height: '0',
+        },
+      });
+    }),
+    // 타이포그래피 클래스
+    plugin(({ addUtilities }: PluginAPI) => {
       addUtilities({
         '.typo-head1': {
           fontSize: '32px',

@@ -67,3 +67,92 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
+
+/* ProseMirror 선택 영역 스타일 조정 */
+.ProseMirror .ProseMirror-selectednode {
+  outline: none; /* 선택 영역 아웃라인 제거 */
+}
+
+/* 텍스트 선택 시 나타나는 하이라이트 스타일 수정 */
+.ProseMirror-focused {
+  outline: none; /* 기본 포커스 테두리 제거 */
+}
+
+/* tiptap 표 */
+
+/* 테이블 기본 스타일 */
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 0;
+  overflow: hidden;
+  table-layout: fixed;
+  width: 100%;
+  border: 1px solid #474747;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  border: 1px solid #474747;
+  box-sizing: border-box;
+  min-width: 1em;
+  padding: 8px;
+  position: relative;
+  vertical-align: top;
+}
+
+.ProseMirror th {
+  background-color: #2a2d2e;
+  font-weight: bold;
+  text-align: left;
+}
+
+/* 테이블 셀 선택 효과 */
+.ProseMirror td.selectedCell,
+.ProseMirror th.selectedCell {
+  background-color: rgba(0, 122, 204, 0.2);
+}
+
+/* 테이블 셀 호버 효과 */
+.ProseMirror td:hover,
+.ProseMirror th:hover {
+  background-color: rgba(38, 79, 120, 0.1);
+}
+
+/* 테이블 리사이징 핸들 */
+.ProseMirror .tableWrapper .column-resize-handle {
+  background-color: #007acc;
+  width: 3px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -1px;
+  pointer-events: none;
+}
+
+/* 테이블 리사이징 시 효과 */
+.ProseMirror.resize-cursor {
+  cursor: col-resize;
+}
+
+/* 테이블 콘트롤 버튼 */
+.ProseMirror .tableWrapper .tableControls {
+  position: absolute;
+  left: 0;
+  top: -24px;
+  display: flex;
+  gap: 4px;
+}
+
+.ProseMirror .tableWrapper .tableControls button {
+  background: #252526;
+  border: 1px solid #474747;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 12px;
+  color: #e8e8e8;
+  cursor: pointer;
+}
+
+.ProseMirror .tableWrapper .tableControls button:hover {
+  background: #2a2d2e;
+}
