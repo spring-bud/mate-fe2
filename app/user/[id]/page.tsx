@@ -37,15 +37,15 @@ const detailedIntroContent = `
 <p>프로젝트 협업이나 궁금한 점이 있으시면 언제든지 연락주세요!</p>
 `;
 
-interface UserPageProps {
-  params: {
-    id: string;
-  };
-}
-
 // 서버 컴포넌트 페이지
-export default function UserPage({ params }: UserPageProps) {
-  const userId = parseInt(params.id);
+export default async function UserPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const userId = Number(resolvedParams.id);
+  console.log(userId);
 
   // 유저 데이터가 없는 경우 404 페이지 표시
   if (isNaN(userId) || userId !== mockUserData.user_id) {
