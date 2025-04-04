@@ -7,7 +7,18 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token');
   const accessToken = request.cookies.get('access_token');
 
-  // 첫 로그인 후 홈 리다이렉트를 위한 코드.
+  const nextResponse = NextResponse.next();
+
+  if (accessToken) {
+    nextResponse.headers.set('Authorization', `Bearer ${accessToken.value}`);
+
+    const cookieHeader = request.headers.get('cookie');
+    if (cookieHeader) {
+      nextResponse.headers.set('cookie', cookieHeader);
+    }
+  }
+
+  // 첫 로그인 후 홈 리다이렉트를 위한 코드 (refresh_token은 있지만 access_token이 없는 경우)
   if (refreshToken && !accessToken) {
     try {
       const response = await fetch(
@@ -26,26 +37,25 @@ export async function middleware(request: NextRequest) {
       }
 
       const data = await response.json();
+
       const { access_token } = reissueResponseSchema.parse(data);
       const maxAge = getTokenRemainingTime(access_token);
-      // 응답 객체 생성
-      const nextResponse = NextResponse.next();
 
-      // 액세스 토큰 쿠키 설정
       nextResponse.cookies.set({
         name: 'access_token',
-        value: access_token, // 검증된 access_token 사용
+        value: access_token,
         path: '/',
-        maxAge: maxAge, // 7일
+        maxAge: maxAge,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
       });
 
-      // 응답 헤더에서 Set-Cookie 헤더 가져오기
-      const setCookieHeaders = response.headers.getSetCookie();
+      // 새로 발급받은 액세스 토큰도 헤더에 추가
+      nextResponse.headers.set('Authorization', `Bearer ${access_token}`);
 
-      // 모든 Set-Cookie 헤더를 NextResponse에 추가
+      // 서버에서 받은 Set-Cookie 헤더 처리
+      const setCookieHeaders = response.headers.getSetCookie();
       if (setCookieHeaders && setCookieHeaders.length > 0) {
         setCookieHeaders.forEach((cookie) => {
           nextResponse.headers.append('Set-Cookie', cookie);
@@ -55,11 +65,12 @@ export async function middleware(request: NextRequest) {
       return nextResponse;
     } catch (error) {
       console.error('Token reissue error:', error);
-      return NextResponse.next();
+      // 에러가 발생해도 요청은 계속 진행
+      return nextResponse;
     }
   }
 
-  return NextResponse.next();
+  return nextResponse;
 }
 
 export const config = {
