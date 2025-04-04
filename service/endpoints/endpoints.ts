@@ -1,7 +1,9 @@
-import { CURRENT_API_VERSION } from "../api-version/apiVersion";
+import { CURRENT_API_VERSION } from '../api-version/apiVersion';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const authURL = {
-  login: "oauth2/authorization/kakao",
+  login: `${baseUrl}/oauth2/authorization/kakao`,
   reissue: `${CURRENT_API_VERSION}/auth/reissue`,
   logout: `${CURRENT_API_VERSION}/auth/logout`,
 };
