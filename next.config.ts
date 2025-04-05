@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    domains: ['via.placeholder.com', 'img1.kakaocdn.net', 't1.kakaocdn.net'],
+    domains: [
+      'via.placeholder.com',
+      'img1.kakaocdn.net',
+      't1.kakaocdn.net',
+      'k.kakaocdn.net',
+    ],
   },
 };
 
