@@ -9,3 +9,7 @@
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true" 
+
+# Netlify 함수(Functions) 설정 추가
+[functions]
+  external_node_modules = ["@netlify/plugin-nextjs"]
