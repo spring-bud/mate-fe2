@@ -65,14 +65,15 @@ export async function middleware(request: NextRequest) {
         httpOnly: false,
       });
 
+      // 여기가 변경된 부분 - credentials: 'include' 추가, Cookie 헤더 제거
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/reissue`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Cookie: `refresh_token=${refreshToken.value}`,
           },
+          credentials: 'include', // 쿠키를 자동으로 포함
         }
       );
 
