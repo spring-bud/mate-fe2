@@ -73,7 +73,6 @@ export async function middleware(request: NextRequest) {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', // 쿠키를 자동으로 포함
         }
       );
 
