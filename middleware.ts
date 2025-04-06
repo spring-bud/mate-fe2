@@ -48,6 +48,10 @@ export async function middleware(request: NextRequest) {
         maxAge: maxAge,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
+        domain:
+          process.env.NODE_ENV === 'production'
+            ? '.springbud.site'
+            : 'localhost',
         httpOnly: true,
       });
 
