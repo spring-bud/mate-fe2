@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { createApiResponseSchema } from "./generic.schema";
+import { z } from 'zod';
+import { createApiResponseSchema } from './generic.schema';
 
 export const uploadImageResponseDataSchema = z.object({
   image_url: z.string().url(),

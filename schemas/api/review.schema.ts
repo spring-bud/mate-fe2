@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { createApiResponseSchema } from "./generic.schema";
+import { z } from 'zod';
+import { createApiResponseSchema } from './generic.schema';
 
 export const reviewBaseSchema = z.object({
   star: z.number().min(0).max(5),
