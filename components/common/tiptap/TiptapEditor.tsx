@@ -1,15 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { Controller, Control } from 'react-hook-form';
 import { getExtensions } from './tiptap-function/extensions';
 import Toolbar from './Toolbar';
-import { uploadImageToEditor } from './tiptap-function/imageUploader';
-import {
-  handleDrop,
-  handleFileInputChange,
-} from '../../../hooks/editor/useEditorHooks';
+import { useImageUploadActions } from '../../../hooks/editor/useEditorHooks';
 
 interface TiptapEditorProps {
   name: string;
@@ -31,32 +27,38 @@ const TiptapEditorContent = ({
   placeholder: string;
   error?: string;
 }) => {
-  const [isImageUploading, setIsImageUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 이전 HTML을 추적하기 위한 ref
   const previousHtmlRef = useRef(value);
+
+  // 에디터 인스턴스 생성
+  const editor = useEditor({
+    extensions: getExtensions(placeholder),
+    content: value,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      previousHtmlRef.current = html;
+      onChange(html);
+    },
+  });
+
+  // 이미지 업로드 관련 훅 사용
+  const {
+    handleImageDrop,
+    handleImageInputChange,
+    isImageUploading,
+    imageUploadError,
+  } = useImageUploadActions(editor);
 
   // 이미지 버튼 클릭 핸들러
   const handleImageButtonClick = () => {
     fileInputRef.current?.click();
   };
 
-  // 에디터 인스턴스 생성 - 컴포넌트의 최상위 레벨에서 호출
-  const editor = useEditor({
-    extensions: getExtensions(placeholder),
-    content: value,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      previousHtmlRef.current = html; // 업데이트될 때 이전 값 저장
-      onChange(html);
-    },
-  });
-
   // 외부 값이 변경되었을 때만 에디터 콘텐츠 업데이트
   useEffect(() => {
     if (editor && value !== previousHtmlRef.current) {
-      // 외부에서 변경된 경우에만 업데이트
       editor.commands.setContent(value || '');
       previousHtmlRef.current = value;
     }
@@ -73,9 +75,7 @@ const TiptapEditorContent = ({
         className={`relative border rounded-lg overflow-hidden transition-colors ${
           error ? 'border-error' : 'border-border hover:border-active'
         }`}
-        onDrop={(e) =>
-          handleDrop(e, editor, uploadImageToEditor, setIsImageUploading)
-        }
+        onDrop={(event) => handleImageDrop(event)}
         onDragOver={(e) => e.preventDefault()}
       >
         {/* 툴바 */}
@@ -89,14 +89,7 @@ const TiptapEditorContent = ({
         <input
           type='file'
           ref={fileInputRef}
-          onChange={(e) =>
-            handleFileInputChange(
-              e,
-              editor,
-              uploadImageToEditor,
-              setIsImageUploading
-            )
-          }
+          onChange={handleImageInputChange}
           accept='image/*'
           className='hidden'
         />
@@ -140,7 +133,14 @@ const TiptapEditorContent = ({
       </div>
 
       {/* 에러 메시지 */}
-      {error && <p className='mt-1 !text-error typo-caption1'>{error}</p>}
+      {(error || imageUploadError) && (
+        <p className='mt-1 !text-error typo-caption1'>
+          {error ||
+            (imageUploadError instanceof Error
+              ? imageUploadError.message
+              : '이미지 업로드에 실패했습니다.')}
+        </p>
+      )}
     </div>
   );
 };
