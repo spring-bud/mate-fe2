@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
       'img1.kakaocdn.net',
       't1.kakaocdn.net',
       'k.kakaocdn.net',
+      'mate-dev-s3.s3.ap-northeast-2.amazonaws.com',
+      // test
+      'picsum.photos',
+      'i.pravatar.cc',
     ],
   },
 };
