@@ -37,6 +37,7 @@ export const queryKeys = {
   // 상품 관련 쿼리 키
   products: {
     all: ['products'] as const,
+    // list 쿼리 키 정리 필요
     list: (params: {
       category?: string;
       sort?: string;
