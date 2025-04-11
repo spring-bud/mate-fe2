@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import useUploadImage from '@/hooks/mutation/useUpload';
+import useUploadImage from '@/hooks/mutation/useUploadImage';
 
 export const useLinkActions = () => {
   const addLink = useCallback((editor: Editor | null) => {

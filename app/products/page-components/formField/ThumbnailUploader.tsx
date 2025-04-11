@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import { Controller, Control } from 'react-hook-form';
 import Image from 'next/image';
-import useUploadImage from '@/hooks/mutation/useUpload';
+import useUploadImage from '@/hooks/mutation/useUploadImage';
 
 import {
   validateImageFile,
