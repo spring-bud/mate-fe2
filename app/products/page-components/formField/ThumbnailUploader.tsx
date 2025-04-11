@@ -1,27 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Controller, Control } from 'react-hook-form';
 import Image from 'next/image';
+import useUploadImage from '@/hooks/api/useUpload';
+
 import {
   validateImageFile,
   ALLOWED_IMAGE_TYPES,
 } from '@/schemas/validations/postForm.schema';
-
-// Mock 썸네일 업로드 함수
-const mockUploadThumbnail = async (file: File): Promise<string> => {
-  return new Promise((resolve) => {
-    // 실제 업로드 대신 파일을 Base64로 변환
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      // 1초 지연으로 로딩 시뮬레이션
-      setTimeout(() => {
-        resolve(reader.result as string);
-      }, 1000);
-    };
-    reader.readAsDataURL(file);
-  });
-};
 
 interface ThumbnailUploaderProps {
   name: string;
@@ -38,20 +25,17 @@ const ThumbnailUploader = ({
   error,
   defaultValue = '',
 }: ThumbnailUploaderProps) => {
-  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync, isPending, isError } = useUploadImage();
 
-  // 파일 업로드 처리 함수
   const handleFileUpload = async (
     file: File,
     onChange: (url: string) => void
   ) => {
     if (!file) return;
 
-    // Zod 스키마를 사용한 파일 검증
     const validationResult = validateImageFile(file);
 
-    // 검증 실패 시 에러 메시지 표시
     if (!validationResult.success) {
       alert(
         validationResult.error.errors[0]?.message ||
@@ -61,18 +45,11 @@ const ThumbnailUploader = ({
     }
 
     try {
-      setIsUploading(true);
-
-      // Mock 업로드 함수 호출
-      const imageUrl = await mockUploadThumbnail(file);
-
-      // 업로드 성공 시 URL 저장
-      onChange(imageUrl);
+      const result = await mutateAsync(file);
+      onChange(result.image_url || '');
     } catch (error) {
       console.error('썸네일 업로드 오류:', error);
       alert('썸네일 업로드에 실패했습니다.');
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -96,11 +73,11 @@ const ThumbnailUploader = ({
           >
             {/* 썸네일 미리보기 또는 업로드 영역 */}
             {value ? (
-              <div className='relative aspect-video w-full overflow-hidden rounded-lg'>
+              <div className='relative aspect-video w-full overflow-hidden rounded-lg bg-gray-800'>
                 <Image
                   src={value}
                   alt='썸네일 이미지'
-                  className='object-cover'
+                  className='object-contain'
                   fill
                 />
 
@@ -159,8 +136,8 @@ const ThumbnailUploader = ({
               </div>
             )}
 
-            {/* 로딩 오버레이 */}
-            {isUploading && (
+            {/* 로딩 오버레이 - isPending 직접 사용 */}
+            {isPending && (
               <div className='absolute inset-0 flex items-center justify-center bg-bgDark bg-opacity-50 rounded-lg'>
                 <div className='text-textLight flex items-center'>
                   <svg
@@ -205,8 +182,12 @@ const ThumbnailUploader = ({
             />
           </div>
 
-          {/* 에러 메시지 */}
-          {error && <p className='mt-1 !text-red-500 typo-caption1'>{error}</p>}
+          {/* 에러 메시지 - isError 직접 사용 */}
+          {(error || isError) && (
+            <p className='mt-1 !text-red-500 typo-caption1'>
+              {error || '이미지 업로드에 실패했습니다.'}
+            </p>
+          )}
         </div>
       )}
     />
