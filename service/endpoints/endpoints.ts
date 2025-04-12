@@ -44,8 +44,7 @@ export const productURL = {
   byUserId: (userId: string) =>
     `${CURRENT_API_VERSION}/products/user/${userId}`,
   create: `${CURRENT_API_VERSION}/products`,
-  withUserContext: (productId: string, userId: string) =>
-    `${CURRENT_API_VERSION}/products/${productId}/${userId}`,
+  detail: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
   delete: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
   like: (productId: string) =>
     `${CURRENT_API_VERSION}/products/like/${productId}`,
