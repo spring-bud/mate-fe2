@@ -34,6 +34,7 @@ export const ProductDetailSchema = z.object({
   id: z.number(),
   title: z.string(),
   content: z.string(),
+  thumbnail_url: z.string().url(),
   category: ProductCategoryEnum,
   status: ProductStatusEnum,
   product_tags: z.array(TagSchema),
