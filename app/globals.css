@@ -261,4 +261,138 @@ body {
   margin-left: auto;
   margin-right: auto;
   display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 일반 데스크톱 (xl: 1280px 이하) */
+@media (max-width: 1280px) {
+  .prose {
+    font-size: 1rem;
+  }
+}
+
+/* 작은 데스크톱 (lg: 1024px 이하) */
+@media (max-width: 1024px) {
+  .prose {
+    font-size: 0.95rem;
+  }
+
+  .prose h1 {
+    font-size: 2rem;
+  }
+
+  .prose h2 {
+    font-size: 1.75rem;
+  }
+
+  .prose h3 {
+    font-size: 1.4rem;
+  }
+}
+
+/* 태블릿 (md: 768px 이하) */
+@media (max-width: 768px) {
+  .prose {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .prose h1 {
+    font-size: 1.75rem;
+    margin-top: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose h2 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose h3 {
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose p,
+  .prose ul,
+  .prose ol {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose blockquote {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    padding-left: 1rem;
+  }
+
+  .prose img {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* 모바일 (sm: 640px 이하) */
+@media (max-width: 640px) {
+  .prose {
+    font-size: 0.875rem;
+  }
+
+  .prose h1 {
+    font-size: 1.6rem;
+  }
+
+  .prose h2 {
+    font-size: 1.35rem;
+  }
+
+  .prose h3 {
+    font-size: 1.15rem;
+  }
+
+  .prose code {
+    font-size: 0.85em;
+  }
+
+  .prose pre {
+    padding: 0.875rem;
+  }
+}
+
+/* 모바일 작은 화면 (xs: 320px 이하) */
+@media (max-width: 320px) {
+  .prose {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .prose h1 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .prose h2 {
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.625rem;
+  }
+
+  .prose h3 {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose code {
+    font-size: 0.8em;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .prose pre {
+    padding: 0.75rem;
+  }
 }
