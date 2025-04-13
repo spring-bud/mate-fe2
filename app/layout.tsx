@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/common/header/Header';
 import { cookies } from 'next/headers';
 import { getUserFromToken } from '@/utils/server-jwt';
+import { ReactQueryProvider } from '@/lib/react-query/ReactQueryProvider';
 
 export const metadata: Metadata = {
   title: 'MATE | 개발자와 디자이너를 위한 프리랜서 허브',
@@ -67,8 +68,10 @@ export default async function RootLayout({
   return (
     <html lang='ko' className='dark'>
       <body>
-        <Header initialUserInfo={userInfo} />
-        {children}
+        <ReactQueryProvider>
+          <Header initialUserInfo={userInfo} />
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   );

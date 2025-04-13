@@ -4,14 +4,40 @@ import { createApiResponseSchema } from '@/schemas/api/generic.schema';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const apiHeaders = new Headers({
-  'Content-Type': 'application/json',
-  credentials: 'include',
-});
+// 쿠키에서 액세스 토큰을 가져오는 함수
+const getAccessToken = (): string | undefined => {
+  if (typeof document === 'undefined') return undefined;
+
+  return document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('access_token='))
+    ?.split('=')[1];
+};
+
+// 헤더 생성 함수로 변경
+export const getApiHeaders = (): Headers => {
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+  });
+
+  // 액세스 토큰이 있으면 Authorization 헤더에 추가
+  const accessToken = getAccessToken();
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`);
+  }
+
+  return headers;
+};
+
+// 기존 정적 헤더 대신 함수를 사용하도록 변경
+export let apiHeaders = getApiHeaders();
 
 const handleMutateRequest = <P>(params: P) => {
   const isFormData = params instanceof FormData;
   let body;
+
+  // 최신 헤더 가져오기
+  apiHeaders = getApiHeaders();
 
   if (isFormData) {
     apiHeaders.delete('Content-Type');
@@ -112,6 +138,9 @@ export const apiClient = {
     try {
       const { params, schema, requestInit } = options || {};
       let fullPath = path;
+
+      // 요청 직전에 최신 헤더 가져오기
+      apiHeaders = getApiHeaders();
 
       if (params) {
         const filteredParams: Record<string, string> = Object.fromEntries(

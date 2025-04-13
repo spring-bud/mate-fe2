@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Editor } from '@tiptap/react';
+import useUploadImage from '@/hooks/mutation/useUploadImage';
 
 export const useLinkActions = () => {
   const addLink = useCallback((editor: Editor | null) => {
@@ -104,52 +105,64 @@ export const useTableActions = () => {
   };
 };
 
-export const handleFileInputChange = (
-  event: React.ChangeEvent<HTMLInputElement>,
-  editor: Editor | null,
-  uploadFunc: (
-    file: File,
-    editor: Editor | null,
-    setLoading: (isLoading: boolean) => void
-  ) => Promise<void>,
-  setLoading: (isLoading: boolean) => void
-) => {
-  const file = event.target.files?.[0];
-  if (file) {
-    uploadFunc(file, editor, setLoading);
-  }
-  // 입력값 초기화
-  if (event.target) {
-    event.target.value = '';
-  }
-};
+export const useImageUploadActions = (editor: Editor | null) => {
+  const {
+    mutateAsync,
+    isPending,
+    isError,
+    error: uploadError,
+  } = useUploadImage();
 
-export const handleDrop = (
-  event: React.DragEvent,
-  editor: Editor | null,
-  uploadFunc: (
-    file: File,
-    editor: Editor | null,
-    setLoading: (isLoading: boolean) => void
-  ) => Promise<void>,
-  setLoading: (isLoading: boolean) => void
-) => {
-  event.preventDefault();
+  const uploadImageToEditor = useCallback(
+    async (file: File): Promise<void> => {
+      if (!editor || !file) return;
+      try {
+        const result = await mutateAsync(file);
+        if (result.image_url) {
+          editor.chain().focus().setImage({ src: result.image_url }).run();
+        }
+      } catch (error) {
+        console.error('이미지 업로드 오류:', error);
+      }
+    },
+    [editor, mutateAsync]
+  );
 
-  if (!editor) return;
+  // 드래그 앤 드롭 핸들러
+  const handleImageDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!editor) return;
 
-  const files = event.dataTransfer.files;
-  if (files.length > 0) {
-    const file = files[0];
-    if (file.type.startsWith('image/')) {
-      uploadFunc(file, editor, setLoading);
-    }
-  }
-};
+      const files = Array.from(e.dataTransfer.files);
+      const imageFile = files.find((file) => file.type.startsWith('image/'));
 
-export default {
-  useLinkActions,
-  useTableActions,
-  handleFileInputChange,
-  handleDrop,
+      if (imageFile) {
+        uploadImageToEditor(imageFile);
+      }
+    },
+    [editor, uploadImageToEditor]
+  );
+
+  // 파일 입력 변경 핸들러
+  const handleImageInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        uploadImageToEditor(file);
+      }
+
+      // 같은 파일 선택 시 이벤트 발생하도록 초기화
+      e.target.value = '';
+    },
+    [uploadImageToEditor]
+  );
+
+  return {
+    uploadImageToEditor,
+    handleImageDrop,
+    handleImageInputChange,
+    isImageUploading: isPending,
+    imageUploadError: isError ? uploadError : null,
+  };
 };

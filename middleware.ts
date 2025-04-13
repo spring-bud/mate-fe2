@@ -10,7 +10,12 @@ export async function middleware(request: NextRequest) {
 
   const nextResponse = NextResponse.next();
 
-  if (refreshToken && !accessToken) {
+  // 액세스 토큰이 있는 경우 요청 헤더에 Authorization 헤더 추가
+  if (accessToken) {
+    nextResponse.headers.set('Authorization', `Bearer ${accessToken.value}`);
+  }
+  // 리프레시 토큰은 있지만 액세스 토큰이 없는 경우 리프레시 로직 실행
+  else if (refreshToken && !accessToken) {
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/reissue`;
 
@@ -40,9 +45,10 @@ export async function middleware(request: NextRequest) {
         maxAge: maxAge,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
+        httpOnly: false,
       });
 
+      // 새로 발급받은 액세스 토큰을 Authorization 헤더에 설정
       nextResponse.headers.set('Authorization', `Bearer ${access_token}`);
 
       const setCookieHeaders = response.headers.getSetCookie();
