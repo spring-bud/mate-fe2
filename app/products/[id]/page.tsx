@@ -15,9 +15,11 @@ import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const productId = (await params).id;
+  const resolvedParams = await params;
+  const productId = resolvedParams.id;
+
   const response = await apiClient.get(productURL.detail(productId), {
     schema: ProductDetailSchema,
   });
@@ -32,11 +34,14 @@ export async function generateMetadata({
 export default async function ProductDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const productId = (await params).id;
+  const resolvedParams = await params;
+  const productId = resolvedParams.id;
+
   const queryClient = new QueryClient();
 
+  // 제품 상세 정보 prefetch
   await queryClient.prefetchQuery({
     queryKey: queryKeys.products.detail(productId),
     queryFn: async () => {
@@ -47,6 +52,7 @@ export default async function ProductDetailPage({
     },
   });
 
+  // 리뷰 데이터 prefetch
   await queryClient.prefetchQuery({
     queryKey: queryKeys.reviews.byProduct(productId),
     queryFn: async () => {
