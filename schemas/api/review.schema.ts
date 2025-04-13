@@ -9,6 +9,8 @@ const ReviewItemSchema = z.object({
   profile_url: z.string().url().optional(),
 });
 
+export type ReviewItemType = z.infer<typeof ReviewItemSchema>;
+
 const ReviewItemsArraySchema = z.array(ReviewItemSchema);
 
 // 리뷰 생성 요청 스키마
