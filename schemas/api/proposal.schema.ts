@@ -7,6 +7,9 @@ export const proposalResponseSchema = z.object({
   description: z.string(),
 });
 
+// 제안서 목록 조회 응답 (배열)
+export const proposalListResponseSchema = z.array(proposalResponseSchema);
+
 // 제안서 생성 요청
 export const proposalCreateRequestSchema = z.object({
   title: z.string(),
@@ -26,6 +29,7 @@ export const proposalUpdateRequestSchema = z.object({
 export const proposalUpdateResponseSchema = proposalResponseSchema;
 
 export type ProposalResponse = z.infer<typeof proposalResponseSchema>;
+export type ProposalListResponse = z.infer<typeof proposalListResponseSchema>;
 export type ProposalCreateRequest = z.infer<typeof proposalCreateRequestSchema>;
 export type ProposalCreateResponse = z.infer<
   typeof proposalCreateResponseSchema
