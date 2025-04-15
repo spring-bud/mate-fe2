@@ -16,6 +16,7 @@ export const userURL = {
 
 // 제안서 관련 API 엔드포인트
 export const proposalURL = {
+  myList: `${CURRENT_API_VERSION}/proposals`,
   byId: (proposalId: string) =>
     `${CURRENT_API_VERSION}/proposals/${proposalId}`,
   create: `${CURRENT_API_VERSION}/proposals`,
