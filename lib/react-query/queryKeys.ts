@@ -15,7 +15,6 @@ export const queryKeys = {
   users: {
     all: ['users'] as const,
     detail: (userId: string) => [...queryKeys.users.all, userId] as const,
-    popularity: () => [...queryKeys.users.all, 'popularity'] as const,
   },
 
   // 제안서 관련 쿼리 키
