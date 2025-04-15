@@ -1,40 +1,36 @@
 import { z } from 'zod';
-import { createApiResponseSchema } from './generic.schema';
 
-export const proposalBaseSchema = z.object({
+// 제안서 조회 응답
+export const proposalResponseSchema = z.object({
+  id: z.number(),
   title: z.string(),
   description: z.string(),
 });
 
-export const proposalItemSchema = proposalBaseSchema.extend({
-  id: z.number(),
+// 제안서 생성 요청
+export const proposalCreateRequestSchema = z.object({
+  title: z.string(),
+  description: z.string(),
 });
 
-// 제안서 목록
-export const proposalListSchema = z.array(proposalItemSchema);
+// 제안서 생성 응답
+export const proposalCreateResponseSchema = proposalResponseSchema;
 
-// 제안서 요청 스케마
-export const proposalRequestSchema = proposalBaseSchema;
+// 제안서 수정 요청
+export const proposalUpdateRequestSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
 
-// 제안서 응답 스케마
-export const proposalFieldsResponseSchema =
-  createApiResponseSchema(proposalBaseSchema);
+// 제안서 수정 응답
+export const proposalUpdateResponseSchema = proposalResponseSchema;
 
-export const getProposalItemResponseSchema =
-  createApiResponseSchema(proposalItemSchema);
-
-export const getProposalListResponseSchema =
-  createApiResponseSchema(proposalListSchema);
-
-export type ProposalCommonFields = z.infer<typeof proposalBaseSchema>;
-export type ProposalItem = z.infer<typeof proposalItemSchema>;
-export type ProposalRequest = z.infer<typeof proposalRequestSchema>;
-export type ProposalFieldsResponse = z.infer<
-  typeof proposalFieldsResponseSchema
+export type ProposalResponse = z.infer<typeof proposalResponseSchema>;
+export type ProposalCreateRequest = z.infer<typeof proposalCreateRequestSchema>;
+export type ProposalCreateResponse = z.infer<
+  typeof proposalCreateResponseSchema
 >;
-export type GetProposalListResponse = z.infer<
-  typeof getProposalListResponseSchema
->;
-export type GetProposalItemResponse = z.infer<
-  typeof getProposalItemResponseSchema
+export type ProposalUpdateRequest = z.infer<typeof proposalUpdateRequestSchema>;
+export type ProposalUpdateResponse = z.infer<
+  typeof proposalUpdateResponseSchema
 >;
