@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { productURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { PostFormData } from '@/schemas/validations/postForm.schema';
 import { productResponseSchema } from '@/schemas/api/product.schema';
 

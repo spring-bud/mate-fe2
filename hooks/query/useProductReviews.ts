@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { reviewURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';
 

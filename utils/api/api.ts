@@ -51,6 +51,10 @@ const handleMutateRequest = <P>(params: P) => {
 };
 
 const parseResponseData = async (res: Response) => {
+  if (res.status === 204) {
+    return null;
+  }
+
   const contentType = res.headers.get('Content-Type');
   if (!contentType) {
     throw new Error(ErrorMessage.INTERNAL_SERVER_ERROR);
@@ -68,9 +72,16 @@ const handleResponse = async <R>(
   schema?: z.ZodType<R>
 ): Promise<R> => {
   try {
+    if (res.status === 204) {
+      return {} as R;
+    }
+
     const responseBody = await parseResponseData(res);
 
     if (res.ok) {
+      if (responseBody === null) {
+        return {} as R;
+      }
       if (schema) {
         try {
           const apiSchema = createApiResponseSchema(schema);
