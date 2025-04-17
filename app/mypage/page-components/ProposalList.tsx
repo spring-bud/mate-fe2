@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-
 import useMyProposalList from '@/hooks/query/proposal/useMyProposalList';
 import useProposalMutation from '@/hooks/mutation/useProposal';
-import ProposalForm from '../proposals/ProposalForm';
+import ProposalForm from './proposals/ProposalForm';
+import ProposalModal from './ProposalModal';
 
 const ProposalList = () => {
   const { data: proposals, isLoading, error } = useMyProposalList();
@@ -13,8 +12,12 @@ const ProposalList = () => {
   const [editingProposal, setEditingProposal] = useState<{
     id: number;
     title: string;
+    description: string;
   } | null>(null);
   const { deleteProposal } = useProposalMutation();
+  const [viewingProposalId, setViewingProposalId] = useState<number | null>(
+    null
+  );
 
   if (isLoading) {
     return <div className='text-textLight'>제안서 목록을 불러오는 중...</div>;
@@ -38,7 +41,11 @@ const ProposalList = () => {
     }
   };
 
-  const handleEditProposal = (proposal: { id: number; title: string }) => {
+  const handleEditProposal = (proposal: {
+    id: number;
+    title: string;
+    description: string;
+  }) => {
     setEditingProposal(proposal);
     setShowForm(true);
   };
@@ -46,6 +53,14 @@ const ProposalList = () => {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingProposal(null);
+  };
+
+  const handleViewProposal = (proposalId: number) => {
+    setViewingProposalId(proposalId);
+  };
+
+  const handleCloseModal = () => {
+    setViewingProposalId(null);
   };
 
   return (
@@ -85,18 +100,22 @@ const ProposalList = () => {
                   <tbody>
                     {proposals &&
                       proposals.map(
-                        (proposal: { id: number; title: string }) => (
+                        (proposal: {
+                          id: number;
+                          title: string;
+                          description: string;
+                        }) => (
                           <tr
                             key={proposal.id}
-                            className='border-b border-border hover:bg-bgLight'
+                            className='border-b border-border hover:bg-hover'
                           >
                             <td className='py-3 px-4 text-textLight'>
-                              <Link
-                                href={`/proposals/${proposal.id}`}
-                                className='hover:text-active'
+                              <button
+                                onClick={() => handleViewProposal(proposal.id)}
+                                className='text-textLight hover:text-active text-left w-full transition-colors focus:outline-none focus:text-active'
                               >
                                 {proposal.title}
-                              </Link>
+                              </button>
                             </td>
                             <td className='py-3 px-4 text-right'>
                               <div className='flex justify-end gap-2'>
@@ -137,6 +156,12 @@ const ProposalList = () => {
             </div>
           )}
         </>
+      )}
+      {viewingProposalId && (
+        <ProposalModal
+          proposalId={viewingProposalId}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

@@ -12,6 +12,7 @@ interface ProposalFormProps {
   initialData?: {
     id: number;
     title: string;
+    description: string;
   };
 }
 
@@ -35,7 +36,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({
   } = useForm<ProposalFormData>({
     defaultValues: {
       title: initialData?.title || '',
-      description: '',
+      description: initialData?.description || '',
     },
   });
 
@@ -97,6 +98,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({
               name='description'
               control={control}
               placeholder='제안서 내용을 입력해주세요...'
+              defaultValue={initialData?.description}
             />
           </div>
           {errors.description && (
