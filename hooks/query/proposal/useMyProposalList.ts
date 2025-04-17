@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { proposalURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import { proposalListResponseSchema } from '@/schemas/api/proposal.schema';
 
@@ -15,6 +15,8 @@ const useMyProposalList = () => {
       });
       return response;
     },
+    staleTime: Infinity,
+    gcTime: 24 * 60 * 60 * 1000,
   });
 };
 
