@@ -81,7 +81,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
         {/* 메뉴 항목들 */}
         <DropdownItem
-          href='/profile'
+          href='/mypage'
           icon={
             <svg
               className='w-4 h-4'
