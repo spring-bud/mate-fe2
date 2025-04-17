@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import ProductDetailClient from './ProductDetailClient';
 import { queryKeys } from '@/lib/react-query/queryKeys';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { productURL, reviewURL } from '@/service/endpoints/endpoints';
 import { ProductDetailSchema } from '@/schemas/api/product.schema';
 import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';

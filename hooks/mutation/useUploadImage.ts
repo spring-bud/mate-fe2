@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { uploadURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import {
   uploadImageResponseDataSchema,
   UploadImageResponseData,

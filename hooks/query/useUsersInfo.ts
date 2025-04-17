@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { userURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import { userSchema } from '@/schemas/api/user.schema';
 

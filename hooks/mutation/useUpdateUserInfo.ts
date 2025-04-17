@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { userURL, authURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import { apiClient } from '@/utils/api/api';
 import { User, userSchema } from '@/schemas/api/user.schema';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import { useAuthStore } from '@/store/authStore';
