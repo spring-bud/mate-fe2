@@ -86,7 +86,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({
             placeholder='제안서 제목'
           />
           {errors.title && (
-            <p className='text-error typo-caption1'>{errors.title.message}</p>
+            <p className='text-error '>{errors.title.message}</p>
           )}
         </div>
 
@@ -102,9 +102,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({
             />
           </div>
           {errors.description && (
-            <p className='text-error typo-caption1'>
-              {errors.description.message}
-            </p>
+            <p className='text-error '>{errors.description.message}</p>
           )}
         </div>
 

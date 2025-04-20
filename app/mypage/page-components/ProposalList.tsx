@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import useMyProposalList from '@/hooks/query/proposal/useMyProposalList';
 import useProposalMutation from '@/hooks/mutation/useProposal';
-import ProposalForm from './proposals/ProposalForm';
+import ProposalForm from './form/ProposalForm';
 import ProposalModal from './ProposalModal';
 
 const ProposalList = () => {

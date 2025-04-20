@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { tagsSchema } from './common/tag.schema';
 
 export const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
@@ -17,33 +18,6 @@ export const imageUrlSchema = z
   .min(1, { message: '이미지를 업로드해주세요.' })
   .refine((url) => url.startsWith('data:image/') || url.startsWith('http'), {
     message: '유효한 이미지 URL이 아닙니다.',
-  });
-
-// 태그 길이 검증 함수
-const validateTagLength = (tag: string) => {
-  const hasKorean = /[가-힣]/.test(tag);
-  const maxLength = hasKorean ? 10 : 20;
-  return tag.length <= maxLength;
-};
-
-// 특수문자 및 불완전한 한글 검증 함수
-const validateTagContent = (tag: string) => {
-  const hasSpecialChars = /[^\w\s가-힣]|_/.test(tag);
-  const hasIncompleteHangul = /[ㄱ-ㅎㅏ-ㅣ]/.test(tag);
-
-  return !hasSpecialChars && !hasIncompleteHangul;
-};
-
-// 태그 배열 스키마
-const tagsSchema = z
-  .array(z.string())
-  .max(5, { message: '태그는 최대 5개까지 추가할 수 있습니다.' })
-  .refine((tags) => tags.every(validateTagLength), {
-    message: '한글 태그는 10자, 영문 태그는 20자 이내로 작성해주세요.',
-  })
-  .refine((tags) => tags.every(validateTagContent), {
-    message:
-      '태그에는 특수문자나 불완전한 한글(자음/모음만)을 포함할 수 없습니다.',
   });
 
 // 포스트 폼 스키마

@@ -5,6 +5,7 @@ import useUserInfo from '@/hooks/query/useUsersInfo';
 import ProfileSection from './page-components/ProfileSection';
 import ProposalList from './page-components/ProposalList';
 import LikedProducts from './page-components/LikedProducts';
+import { User } from '@/schemas/api/user.schema';
 
 interface MyPageClientProps {
   userId: string;
@@ -12,6 +13,7 @@ interface MyPageClientProps {
 
 const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
   const { data: userData, isLoading, error } = useUserInfo(userId);
+  console.log(userData);
 
   const [activeTab, setActiveTab] = useState<'profile' | 'proposals' | 'likes'>(
     'profile'
@@ -94,7 +96,7 @@ const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
         <div className='p-4 sm:p-6 md:p-8'>
           {activeTab === 'profile' && (
             <ProfileSection
-              userData={userData}
+              userData={userData as User}
               isEditMode={isEditMode}
               toggleEditMode={toggleEditMode}
             />

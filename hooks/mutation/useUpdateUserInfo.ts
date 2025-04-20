@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { userURL, authURL } from '@/service/endpoints/endpoints';
 import { apiClient } from '@/utils/api/api';
-import { User, userSchema } from '@/schemas/api/user.schema';
+import { User } from '@/schemas/api/user.schema';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import { useAuthStore } from '@/store/authStore';
 import { getTokenRemainingTime } from '@/utils/jwt';
@@ -18,7 +18,6 @@ const useUpdateUserInfo = () => {
     mutationFn: async (data: Partial<User>) => {
       return apiClient.patch(userURL.update, {
         params: data,
-        schema: userSchema,
       });
     },
     onSuccess: async () => {
