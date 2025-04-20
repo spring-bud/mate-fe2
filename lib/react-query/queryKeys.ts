@@ -11,10 +11,10 @@ export const queryKeys = {
     reissue: () => [...queryKeys.auth.all, 'reissue'] as const,
   },
 
-  // 사용자 관련 쿼리 키
-  users: {
-    all: ['users'] as const,
-    detail: (userId: string) => [...queryKeys.users.all, userId] as const,
+  // 내정보 쿼리 키
+  myInfo: {
+    all: ['myInfo'] as const,
+    detail: (userId: string) => [...queryKeys.myInfo.all, userId] as const,
   },
 
   // 제안서 관련 쿼리 키

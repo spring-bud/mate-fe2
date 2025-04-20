@@ -21,7 +21,7 @@ const useUpdateUserInfo = () => {
       });
     },
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.myInfo.all });
 
       // 토큰 삭제 후 재발급
       try {

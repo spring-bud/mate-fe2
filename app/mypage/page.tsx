@@ -37,7 +37,7 @@ export default async function MyPage() {
 
   // 사용자 정보 미리 가져오기
   await queryClient.prefetchQuery({
-    queryKey: queryKeys.users.detail(userId),
+    queryKey: queryKeys.myInfo.detail(userId),
     queryFn: async () => {
       return apiClient.get(userURL.info(userId), {});
     },

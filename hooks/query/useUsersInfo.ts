@@ -8,7 +8,7 @@ import { queryKeys } from '@/lib/react-query/queryKeys';
 // 사용자 정보를 가져오는 훅 (장기 캐싱 적용)
 const useUserInfo = (userId: string) => {
   return useQuery({
-    queryKey: queryKeys.users.detail(userId),
+    queryKey: queryKeys.myInfo.detail(userId),
     queryFn: async () => {
       const response = await apiClient.get(userURL.info(userId), {});
       return response;
