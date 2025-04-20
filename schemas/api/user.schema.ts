@@ -6,7 +6,7 @@ export const stackSchema = z.object({
   name: z.string(),
 });
 
-// 사용자 스키마 정의
+// API 사용자 스키마 정의 (서버에서 받는 데이터 타입)
 export const userSchema = z.object({
   user_id: z.number(),
   nickname: z.string(),
@@ -21,7 +21,5 @@ export const userSchema = z.object({
   user_stacks: z.array(stackSchema),
 });
 
-// TypeScript 타입 정의
 export type Stack = z.infer<typeof stackSchema>;
-
 export type User = z.infer<typeof userSchema>;
