@@ -66,7 +66,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       }
     } catch (error) {
       console.error('이미지 업로드 중 오류:', error);
-      alert('이미지 업로드에 실패했습니다.');
       // 실패 시 미리보기 초기화
       setPreviewImage(null);
     }
