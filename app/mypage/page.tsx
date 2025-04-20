@@ -9,7 +9,6 @@ import {
 import { getUserFromToken, isValidToken } from '@/utils/jwt';
 import apiClient from '@/utils/api/api';
 import { userURL, proposalURL } from '@/service/endpoints/endpoints';
-import { userSchema } from '@/schemas/api/user.schema';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import MyPageClient from './MyPageClient';
 import { proposalListResponseSchema } from '@/schemas/api/proposal.schema';
@@ -40,9 +39,7 @@ export default async function MyPage() {
   await queryClient.prefetchQuery({
     queryKey: queryKeys.users.detail(userId),
     queryFn: async () => {
-      return apiClient.get(userURL.info(userId), {
-        schema: userSchema,
-      });
+      return apiClient.get(userURL.info(userId), {});
     },
   });
 
