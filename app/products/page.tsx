@@ -4,7 +4,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from '@tanstack/react-query';
-import { apiClient } from '@/utils/api';
+import apiClient from '@/utils/api/api';
 import { productURL, tagURL } from '@/service/endpoints/endpoints';
 import {
   ProductListResponseSchema,

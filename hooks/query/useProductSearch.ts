@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { productURL } from '@/service/endpoints/endpoints';
-import { apiClient } from '@/utils/api';
+import apiClient from '@/utils/api/api';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import {
   ProductSearchBody,
