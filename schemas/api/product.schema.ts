@@ -27,7 +27,7 @@ const CountSchema = z.object({
 const ProductStatusEnum = z.enum(['ACTIVE', 'INACTIVE', 'PENDING', 'SOLD']);
 
 // 제품 카테고리 enum
-const ProductCategoryEnum = z.enum(['DEVELOP', 'DESIGN', 'MARKETING', 'OTHER']);
+const ProductCategoryEnum = z.enum(['DEVELOP', 'DESIGN']);
 
 // 제품 상세 스키마
 export const ProductDetailSchema = z.object({
@@ -42,3 +42,68 @@ export const ProductDetailSchema = z.object({
   count: CountSchema,
   is_liked: z.boolean(),
 });
+
+// 제품 목록 아이템 스키마
+export const ProductListItemSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  content: z.string(),
+  thumbnail_url: z.string().url(),
+  category: ProductCategoryEnum,
+  product_tags: z.array(TagSchema),
+  created_at: z.string(),
+  status: ProductStatusEnum, // status 지워져야함
+  owner: UserSchema,
+  count: CountSchema,
+  is_liked: z.boolean(),
+});
+
+export type ProductListItem = z.infer<typeof ProductListItemSchema>;
+
+// 제품 목록 응답 스키마
+export const ProductListSchema = z.array(ProductListItemSchema);
+
+// 제품 목록 응답 스키마 (페이징 포함)
+export const ProductListResponseSchema = z.object({
+  content: z.array(ProductListItemSchema),
+  current_page: z.number(),
+  has_next: z.boolean(),
+});
+
+export type ProductListResponseType = z.infer<typeof ProductListResponseSchema>;
+
+// 태그 검색 응답 스키마
+export const TagSearchResponseSchema = z.array(z.string());
+
+// 인기 태그 아이템 스키마
+export const PopularTagItemSchema = z.object({
+  name: z.string(),
+  count: z.number(),
+});
+
+// 인기 태그 응답 스키마
+export const PopularTagsResponseSchema = z.array(PopularTagItemSchema);
+
+// 검색 정렬 옵션 enum
+export const SortOptionEnum = z.enum(['LIKE', 'CREATE']);
+
+// 검색 파라미터 스키마
+export const ProductSearchBodySchema = z.object({
+  category: z.string().optional(),
+  sort: z.string().optional(),
+  tag: z.array(z.string()).optional(),
+  title: z.string().optional(),
+  size: z.number().optional().default(4),
+  page: z.number().optional().default(0),
+});
+
+export type ProductSearchBody = z.infer<typeof ProductSearchBodySchema>;
+
+// 태그 검색 파라미터 스키마
+export const TagSearchBodySchema = z.object({
+  tag: z.string(),
+});
+
+// 이전 이름과의 호환성을 위한 타입 별칭
+export const ProductSearchParamsSchema = ProductSearchBodySchema;
+export const TagSearchParamsSchema = TagSearchBodySchema;

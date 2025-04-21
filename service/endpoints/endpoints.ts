@@ -38,15 +38,16 @@ export const reviewURL = {
 
 // 상품 관련 API 엔드포인트
 export const productURL = {
-  byUserId: (userId: string) =>
-    `${CURRENT_API_VERSION}/products/user/${userId}`,
   create: `${CURRENT_API_VERSION}/products`,
   detail: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
   delete: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
-  like: (productId: string) =>
-    `${CURRENT_API_VERSION}/products/like/${productId}`,
-  likes: (productId: string) =>
-    `${CURRENT_API_VERSION}/products/likes/${productId}`,
+  srch: `${CURRENT_API_VERSION}/products/srch`,
+};
+
+// 태그 관련 API 엔드포인트
+export const tagURL = {
+  search: `${CURRENT_API_VERSION}/products/tagName`,
+  mostTag: `${CURRENT_API_VERSION}/products/mostTag`,
 };
 
 // 업로드 관련 API 엔드포인트

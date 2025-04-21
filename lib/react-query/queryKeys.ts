@@ -1,7 +1,4 @@
-/**
- * 모든 API 요청에 대한 쿼리 키 정의
- * 계층적 구조를 사용하여 관련 쿼리를 그룹화
- */
+import { ProductSearchBody } from '@/schemas/api/product.schema';
 
 export const queryKeys = {
   // 인증 관련 쿼리 키
@@ -36,27 +33,26 @@ export const queryKeys = {
   // 상품 관련 쿼리 키
   products: {
     all: ['products'] as const,
-    // list 쿼리 키 정리 필요
-    list: (params: {
-      category?: string;
-      sort?: string;
-      tags?: string[];
-      title?: string;
-    }) =>
+    list: (body: ProductSearchBody) =>
       [
         ...queryKeys.products.all,
         'list',
-        params.category ?? 'all',
-        params.sort ?? 'recent',
-        params.tags?.length ? params.tags.join(',') : 'all',
-        params.title ?? '',
+        body.category ?? 'DEVELOP',
+        body.sort ?? 'CREATE',
+        Array.isArray(body.tag) && body.tag.length > 0
+          ? body.tag.join(',')
+          : '',
+        body.title ?? '',
+        body.size ?? 4,
       ] as const,
     detail: (productId: string) =>
       [...queryKeys.products.all, productId] as const,
-    byUser: (userId: string) =>
-      [...queryKeys.products.all, 'user', userId] as const,
-    likes: (productId: string) =>
-      [...queryKeys.products.all, 'likes', productId] as const,
+  },
+  tag: {
+    all: ['tags'] as const,
+    search: (searchTerm: string) =>
+      [...queryKeys.tag.all, 'search', searchTerm] as const,
+    mostTag: () => [...queryKeys.tag.all, 'mostTag'] as const,
   },
 
   // 채팅 관련 쿼리 키
