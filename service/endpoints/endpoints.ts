@@ -10,16 +10,13 @@ export const authURL = {
 
 // 사용자 관련 API 엔드포인트
 export const userURL = {
-  popularity: `${CURRENT_API_VERSION}/users/popularity`,
-  byId: `${CURRENT_API_VERSION}/users/id`,
+  info: (userId: string) => `${CURRENT_API_VERSION}/users/${userId}`,
   update: `${CURRENT_API_VERSION}/users`,
-  delete: `${CURRENT_API_VERSION}/users`,
-  reasonType: `${CURRENT_API_VERSION}/users/reasontype`,
 };
 
 // 제안서 관련 API 엔드포인트
 export const proposalURL = {
-  list: `${CURRENT_API_VERSION}/proposals`,
+  myList: `${CURRENT_API_VERSION}/proposals`,
   byId: (proposalId: string) =>
     `${CURRENT_API_VERSION}/proposals/${proposalId}`,
   create: `${CURRENT_API_VERSION}/proposals`,

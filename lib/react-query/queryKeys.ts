@@ -12,13 +12,12 @@ export const queryKeys = {
   users: {
     all: ['users'] as const,
     detail: (userId: string) => [...queryKeys.users.all, userId] as const,
-    popularity: () => [...queryKeys.users.all, 'popularity'] as const,
   },
 
   // 제안서 관련 쿼리 키
   proposals: {
     all: ['proposals'] as const,
-    list: () => [...queryKeys.proposals.all, 'list'] as const,
+    mylist: () => [...queryKeys.proposals.all, 'mylist'] as const,
     detail: (proposalId: string) =>
       [...queryKeys.proposals.all, proposalId] as const,
   },

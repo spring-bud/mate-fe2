@@ -21,11 +21,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   initialize: () => {
     try {
       // 쿠키에서 access_token 가져오기
-      const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split('=');
-        acc[key] = value;
-        return acc;
-      }, {} as Record<string, string>);
+      const cookies = document.cookie
+        .split(';')
+        .reduce<Record<string, string>>((acc, cookie) => {
+          const [key, value] = cookie.trim().split('=');
+          if (key) acc[key] = value;
+          return acc;
+        }, {});
 
       const accessToken = cookies['access_token'];
 

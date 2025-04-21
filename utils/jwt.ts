@@ -82,3 +82,50 @@ export function isValidToken(token: string): boolean {
     return false;
   }
 }
+
+function setCookie(
+  name: string,
+  value: string,
+  maxAge?: number,
+  options: Record<string, any> = {}
+) {
+  let cookieString = `${name}=${value};`;
+
+  if (maxAge !== undefined) {
+    cookieString += ` max-age=${maxAge};`;
+  }
+
+  // 기본 옵션 설정
+  cookieString += ` path=${options.path || '/'};`;
+
+  if (options.samesite) {
+    cookieString += ` samesite=${options.samesite};`;
+  }
+
+  if (options.secure) {
+    cookieString += ' secure;';
+  }
+
+  if (options.httpOnly !== undefined) {
+    cookieString += ` httponly=${options.httpOnly};`;
+  }
+
+  document.cookie = cookieString;
+}
+
+function deleteCookie(name: string, path = '/') {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+}
+
+export function setAuthToken(token: string, maxAge: number) {
+  setCookie('access_token', token, maxAge, {
+    path: '/',
+    samesite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: false,
+  });
+}
+
+export function deleteAuthToken() {
+  deleteCookie('access_token');
+}
