@@ -8,6 +8,7 @@ import {
   DropdownItem,
   DropdownDivider,
 } from '@/components/ui/dropdown';
+import useLogout from '@/hooks/mutation/useLogout';
 
 interface UserProfileProps {
   isLoggedIn: boolean;
@@ -20,6 +21,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
   userName = '사용자',
   userImageUrl = '/assets/icons/default-avatar.png',
 }) => {
+  const { mutateAsync: logout } = useLogout();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   // 로그인하지 않은 경우 로그인 버튼 표시
   if (!isLoggedIn) {
     return (
@@ -152,7 +159,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
         <DropdownDivider />
 
         <DropdownItem
-          href='/logout'
+          onClick={handleLogout} // 함수 레퍼런스를 직접 전달
+          keepOpen={true} // 클릭해도 드롭다운이 닫히지 않도록 설정
           icon={
             <svg
               className='w-4 h-4'
