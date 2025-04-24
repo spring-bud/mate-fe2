@@ -1,8 +1,30 @@
 import { ErrorMessage } from '@/constant/errorMessage';
 import { z } from 'zod';
 import { createApiResponseSchema } from '@/schemas/api/generic.schema';
+import { reissueResponseSchema } from '@/schemas/api/auth.schema';
+import { getTokenRemainingTime } from '@/utils/jwt';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// 토큰 재발급 관련 변수들
+let isRefreshing = false;
+let refreshPromise: Promise<string> | null = null;
+let failedQueue: {
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
+}[] = [];
+
+const processQueue = (error: Error | null, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
 
 // 쿠키에서 액세스 토큰을 가져오는 함수
 const getAccessToken = (): string | undefined => {
@@ -14,7 +36,7 @@ const getAccessToken = (): string | undefined => {
     ?.split('=')[1];
 };
 
-// 헤더 생성 함수로 변경
+// 헤더 생성 함수
 export const getApiHeaders = (): Headers => {
   const headers = new Headers({
     'Content-Type': 'application/json',
@@ -29,8 +51,43 @@ export const getApiHeaders = (): Headers => {
   return headers;
 };
 
-// 기존 정적 헤더 대신 함수를 사용하도록 변경
+// 헤더 변수 (매 요청마다 업데이트됨)
 export let apiHeaders = getApiHeaders();
+
+// 토큰 재발급 함수
+const refreshAccessToken = async (): Promise<string> => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/reissue`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 리프레시 토큰이 쿠키에 있으므로
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to refresh token');
+    }
+
+    const data = await response.json();
+    const apiResponseSchema = createApiResponseSchema(reissueResponseSchema);
+    const validatedData = apiResponseSchema.parse(data);
+    const access_token = validatedData.data.access_token;
+
+    // 쿠키에 새 토큰 저장 (클라이언트 사이드에서만)
+    if (typeof document !== 'undefined') {
+      const maxAge = getTokenRemainingTime(access_token);
+      document.cookie = `access_token=${access_token}; path=/; max-age=${maxAge}; samesite=lax; ${
+        process.env.NODE_ENV === 'production' ? 'secure;' : ''
+      }`;
+    }
+
+    return access_token;
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    throw error;
+  }
+};
 
 const handleMutateRequest = <P>(params: P) => {
   const isFormData = params instanceof FormData;
@@ -67,13 +124,113 @@ const parseResponseData = async (res: Response) => {
   throw new Error(`Unsupported response type: ${contentType}`);
 };
 
+// 커스텀 HTTP 에러
+export class CustomHttpError extends Error {
+  status: number;
+
+  constructor(status: number, message: any) {
+    super(typeof message === 'string' ? message : JSON.stringify(message));
+    this.status = status;
+    this.name = 'CustomHttpError';
+  }
+}
+
+// 응답 처리 함수
 const handleResponse = async <R>(
   res: Response,
-  schema?: z.ZodType<R>
+  schema?: z.ZodType<R>,
+  requestOptions?: {
+    method: string;
+    path: string;
+    params?: any;
+    requestInit?: RequestInit;
+  }
 ): Promise<R> => {
   try {
     if (res.status === 204) {
       return {} as R;
+    }
+
+    // 401 에러 처리 로직
+    if (res.status === 401) {
+      let errorData;
+      try {
+        // 응답 본문 파싱 시도
+        errorData = await res.json();
+      } catch (e) {
+        errorData = { message: 'Token error' };
+      }
+
+      // 토큰 만료 확인 및 재요청 로직
+      if (
+        errorData?.message === '유효하지 않은 토큰 입니다' &&
+        requestOptions
+      ) {
+        // 이미 토큰 갱신 중이면 대기
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+            .then(() => {
+              // 최신 헤더로 요청 재시도
+              return apiClient[
+                requestOptions.method.toLowerCase() as
+                  | 'get'
+                  | 'post'
+                  | 'patch'
+                  | 'delete'
+              ]<R>(requestOptions.path, {
+                params: requestOptions.params,
+                schema,
+                requestInit: requestOptions.requestInit,
+              });
+            })
+            .catch((err) => Promise.reject(err));
+        }
+
+        // 토큰 갱신 프로세스 시작
+        isRefreshing = true;
+
+        try {
+          // 여기서는 Promise를 저장해두고 재사용
+          if (!refreshPromise) {
+            refreshPromise = refreshAccessToken();
+          }
+
+          const newToken = await refreshPromise;
+          refreshPromise = null;
+          isRefreshing = false;
+
+          // 대기 중인 요청 처리
+          processQueue(null, newToken);
+
+          // 현재 요청 재시도 (최신 헤더 사용)
+          apiHeaders = getApiHeaders(); // 새로 발급된 토큰으로 헤더 갱신
+          return apiClient[
+            requestOptions.method.toLowerCase() as
+              | 'get'
+              | 'post'
+              | 'patch'
+              | 'delete'
+          ]<R>(requestOptions.path, {
+            params: requestOptions.params,
+            schema,
+            requestInit: requestOptions.requestInit,
+          });
+        } catch (refreshError) {
+          isRefreshing = false;
+          refreshPromise = null;
+          processQueue(refreshError as Error);
+
+          // 로그인 페이지로 이동 또는 다른 처리
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          throw new CustomHttpError(401, '로그인이 필요합니다');
+        }
+      }
+
+      throw new CustomHttpError(401, errorData?.message || 'Unauthorized');
     }
 
     const responseBody = await parseResponseData(res);
@@ -118,23 +275,15 @@ const handleResponse = async <R>(
 
     throw new CustomHttpError(res.status, errorMessage);
   } catch (error: any) {
+    if (error instanceof CustomHttpError) {
+      throw error;
+    }
     if (typeof window !== 'undefined') {
       throw new CustomHttpError(error.status || 500, error.message);
     }
     return res.status as R;
   }
 };
-
-// 커스텀 HTTP 에러
-export class CustomHttpError extends Error {
-  status: number;
-
-  constructor(status: number, message: any) {
-    super(typeof message === 'string' ? message : JSON.stringify(message));
-    this.status = status;
-    this.name = 'CustomHttpError';
-  }
-}
 
 // API 요청 메서드
 export const apiClient = {
@@ -176,7 +325,12 @@ export const apiClient = {
         ...requestInit,
       });
 
-      return handleResponse<R>(res, schema);
+      return handleResponse<R>(res, schema, {
+        method: 'GET',
+        path,
+        params,
+        requestInit,
+      });
     } catch (error: any) {
       throw new CustomHttpError(
         error.status || 500,
@@ -205,7 +359,12 @@ export const apiClient = {
         ...requestInit,
       });
 
-      return handleResponse<R>(res, schema);
+      return handleResponse<R>(res, schema, {
+        method: 'POST',
+        path,
+        params,
+        requestInit,
+      });
     } catch (error: any) {
       throw new CustomHttpError(
         error.status || 500,
@@ -234,7 +393,12 @@ export const apiClient = {
         ...requestInit,
       });
 
-      return handleResponse<R>(res, schema);
+      return handleResponse<R>(res, schema, {
+        method: 'PATCH',
+        path,
+        params,
+        requestInit,
+      });
     } catch (error: any) {
       throw new CustomHttpError(
         error.status || 500,
@@ -263,7 +427,12 @@ export const apiClient = {
         ...requestInit,
       });
 
-      return handleResponse<R>(res, schema);
+      return handleResponse<R>(res, schema, {
+        method: 'DELETE',
+        path,
+        params,
+        requestInit,
+      });
     } catch (error: any) {
       throw new CustomHttpError(
         error.status || 500,
