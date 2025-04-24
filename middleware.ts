@@ -62,6 +62,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  if (accessToken && !refreshToken) {
+    nextResponse.cookies.delete('access_token');
+
+    return nextResponse;
+  }
+
   return nextResponse;
 }
 
