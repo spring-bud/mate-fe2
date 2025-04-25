@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import useProductReviews from '@/hooks/query/useProductReviews';
 import { ReviewItemType } from '@/schemas/api/review.schema';
 import Image from 'next/image';
 import KakaoLoginButton from '@/components/ui/button/KakaoLoginButton';
 import { CustomHttpError } from '@/utils/api/api';
+import ReviewModal from './ReviewModal';
 
 // 별점 컴포넌트
 const StarRating = ({ rating }: { rating: number }) => {
@@ -117,6 +118,7 @@ const LoginRequired = () => {
 // 리뷰 목록 컴포넌트
 const ReviewList = ({ productId }: { productId: string }) => {
   const { data: reviews, isLoading, error } = useProductReviews(productId);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 401 인증 오류 처리
   if (error && (error as CustomHttpError).status === 401) {
@@ -173,7 +175,10 @@ const ReviewList = ({ productId }: { productId: string }) => {
           리뷰 <span className='text-textDim'>({reviews?.length || 0})</span>
         </h2>
 
-        <button className='flex items-center gap-1 px-3 py-1.5 bg-active text-white rounded text-sm hover:opacity-90 transition-opacity'>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className='flex items-center gap-1 px-3 py-1.5 bg-active text-white rounded text-sm hover:opacity-90 transition-opacity'
+        >
           <svg
             width='16'
             height='16'
@@ -212,6 +217,11 @@ const ReviewList = ({ productId }: { productId: string }) => {
           <p className='text-textDim text-sm'>첫 번째 리뷰를 작성해 보세요!</p>
         </div>
       )}
+      <ReviewModal
+        productId={productId}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
