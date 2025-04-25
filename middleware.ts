@@ -4,11 +4,18 @@ import { reissueResponseSchema } from './schemas/api/auth.schema';
 import { getTokenRemainingTime } from './utils/jwt';
 import { createApiResponseSchema } from './schemas/api/generic.schema';
 
+const PROTECTED_ROUTES = ['/products/create', '/products/edit/.*', '/mypage.*'];
+
 export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token');
   const accessToken = request.cookies.get('access_token');
 
   const nextResponse = NextResponse.next();
+  const path = request.nextUrl.pathname;
+
+  const isProtectedRoute = PROTECTED_ROUTES.some(
+    (route) => path === route || path.startsWith(`${route}/`)
+  );
 
   // 액세스 토큰이 있는 경우 요청 헤더에 Authorization 헤더 추가
   if (accessToken) {
@@ -66,6 +73,10 @@ export async function middleware(request: NextRequest) {
     nextResponse.cookies.delete('access_token');
 
     return nextResponse;
+  }
+
+  if (isProtectedRoute && !accessToken) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return nextResponse;
