@@ -1,6 +1,7 @@
 'use client';
 
 import { CATEGORY_OPTIONS } from '../../constants/productConstants';
+import CreateProductsButton from '@/components/ui/button/CreateProductButton';
 
 interface CategoryTabsProps {
   activeCategory: string;
@@ -17,24 +18,29 @@ const CategoryTabs = ({
   ];
 
   return (
-    <div className='flex border-b border-border'>
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => onCategoryChange(category.id)}
-          className={`py-3 px-6 typo-button1 relative transition-colors duration-200 
-          ${
-            activeCategory === category.id
-              ? 'text-textLight'
-              : 'text-textDim hover:text-textLight'
-          }`}
-        >
-          {category.label}
-          {activeCategory === category.id && (
-            <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-active' />
-          )}
-        </button>
-      ))}
+    <div className='flex items-center border-b border-border'>
+      <div className='flex'>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            className={`py-3 px-6 typo-button1 relative transition-colors duration-200 
+            ${
+              activeCategory === category.id
+                ? 'text-textLight'
+                : 'text-textDim hover:text-textLight'
+            }`}
+          >
+            {category.label}
+            {activeCategory === category.id && (
+              <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-active' />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* 글 생성 버튼 */}
+      <CreateProductsButton />
     </div>
   );
 };

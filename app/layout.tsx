@@ -21,20 +21,23 @@ export const metadata: Metadata = {
     '프로젝트',
     '프리랜서 플랫폼',
   ],
+  icons: {
+    icon: '/laptop-cat.png',
+    apple: '/laptop-cat.png',
+    shortcut: '/laptop-cat.png',
+  },
   openGraph: {
-    title: 'MATE | 개발자와 디자이너를 위한 프리랜서 허브',
-    description:
-      '최고의 개발자와 디자이너를 만나 프로젝트를 성공적으로 완성하세요.',
-    // url: 'https://mate-freelancer.com',
+    title: 'MATE | 프리랜서 허브',
+    description: 'MATE - 빠른 프리랜서 매칭 플랫폼!',
+    url: 'https://mate.springbud.site/',
     siteName: 'MATE',
     locale: 'ko_KR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MATE | 개발자와 디자이너를 위한 프리랜서 허브',
-    description:
-      '최고의 개발자와 디자이너를 만나 프로젝트를 성공적으로 완성하세요.',
+    title: 'MATE | 프리랜서 허브',
+    description: 'MATE - 빠른 프리랜서 매칭 플랫폼!',
   },
   robots: {
     index: true,
