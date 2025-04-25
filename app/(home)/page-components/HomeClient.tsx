@@ -34,15 +34,14 @@ const HomeClient = () => {
                 transition={{ duration: 0.8 }}
               >
                 <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-textLight mb-6 leading-tight'>
-                  클라이언트와 프리랜서를
+                  프리랜서를 위한 허브
                   <br />
-                  <span className='text-active'>빠르게 연결하는</span>
+                  <span className='text-active'>쉽고 빠른 매칭!</span>
                   <br />
                   <span className='text-active typo-head1'>MATE</span>
                 </h1>
                 <p className='text-lg md:text-xl text-textPrimary mb-8 max-w-lg'>
-                  복잡한 과정 없이 빠르게 프로젝트를 진행하세요. 개발과 디자인
-                  전문 프리랜서들이 기다리고 있습니다.
+                  복잡한 과정, 어떠한 수수료도 없이 빠르게 매칭이 가능해요!
                 </p>
                 <div className='flex flex-col sm:flex-row gap-4'>
                   <Link
@@ -52,7 +51,7 @@ const HomeClient = () => {
                     프로젝트 둘러보기
                   </Link>
                   <Link
-                    href='#features'
+                    href='/help'
                     className='px-6 py-3 bg-transparent border border-border text-textLight rounded-md hover:bg-hover transition-all text-center typo-button1'
                   >
                     서비스 알아보기
@@ -70,10 +69,11 @@ const HomeClient = () => {
                     <p className='text-textDim text-sm'>완료된 프로젝트</p>
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-active'>24H</p>
+                    <p className='text-2xl font-bold text-active'>10m</p>
                     <p className='text-textDim text-sm'>평균 매칭 시간</p>
                   </div>
                 </div>
+                <p className='mt-4 text-textDim'>이고 싶습니다.</p>
               </motion.div>
 
               <motion.div
@@ -188,7 +188,7 @@ const HomeClient = () => {
                   MATE의 특별한 기능
                 </h2>
                 <p className='text-textPrimary max-w-2xl mx-auto'>
-                  프리랜서와 클라이언트 모두에게 최적화된 경험을 제공합니다
+                  은 많이는 없지만, 쉽고 편리한 경험을 제공해드립니다!
                 </p>
               </motion.div>
             </div>
@@ -232,8 +232,8 @@ const HomeClient = () => {
                   빠른 매칭 시스템
                 </h3>
                 <p className='text-textPrimary'>
-                  평균 24시간 이내에 적합한 프리랜서와 매칭됩니다. 복잡한
-                  프로세스 없이 빠르게 프로젝트를 시작하세요.
+                  MATE에 등록된 프로덕트를 참고하여 중간 과정없이 해당
+                  프리랜서에게 다이렉트 채팅!
                 </p>
               </motion.div>
 
@@ -254,21 +254,65 @@ const HomeClient = () => {
                     xmlns='http://www.w3.org/2000/svg'
                   >
                     <path
-                      d='M22 12H18L15 21L9 3L6 12H2'
+                      d='M9 3H5C4.44772 3 4 3.44772 4 4V8C4 8.55228 4.44772 9 5 9H9C9.55228 9 10 8.55228 10 8V4C10 3.44772 9.55228 3 9 3Z'
                       stroke='currentColor'
                       strokeWidth='2'
                       strokeLinecap='round'
                       strokeLinejoin='round'
                       className='text-active'
                     />
+                    <path
+                      d='M19 3H15C14.4477 3 14 3.44772 14 4V8C14 8.55228 14.4477 9 15 9H19C19.5523 9 20 8.55228 20 8V4C20 3.44772 19.5523 3 19 3Z'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='text-active'
+                    />
+                    <path
+                      d='M9 13H5C4.44772 13 4 13.4477 4 14V18C4 18.5523 4.44772 19 5 19H9C9.55228 19 10 18.5523 10 18V14C10 13.4477 9.55228 13 9 13Z'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='text-active'
+                    />
+                    <path
+                      d='M19 13H15C14.4477 13 14 13.4477 14 14V18C14 18.5523 14.4477 19 15 19H19C19.5523 19 20 18.5523 20 18V14C20 13.4477 19.5523 13 19 13Z'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='text-active'
+                    />
+                    <line
+                      x1='7'
+                      y1='9'
+                      x2='7'
+                      y2='13'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      className='text-active'
+                    />
+                    <line
+                      x1='17'
+                      y1='9'
+                      x2='17'
+                      y2='13'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      className='text-active'
+                    />
                   </svg>
                 </div>
                 <h3 className='text-xl font-semibold text-textLight mb-3'>
-                  투명한 가격 정책
+                  태그 기반 검색
                 </h3>
                 <p className='text-textPrimary'>
-                  숨겨진 비용 없이 명확한 가격 정책을 제공합니다. 프로젝트
-                  예산을 효율적으로 관리하세요.
+                  원하는 기술스택 또는 적절한 태그를 검색하여 필터링된 외주
+                  프로덕트를 검색할 수 있어요!
                 </p>
               </motion.div>
 
@@ -289,7 +333,7 @@ const HomeClient = () => {
                     xmlns='http://www.w3.org/2000/svg'
                   >
                     <path
-                      d='M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z'
+                      d='M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z'
                       stroke='currentColor'
                       strokeWidth='2'
                       strokeLinecap='round'
@@ -297,37 +341,51 @@ const HomeClient = () => {
                       className='text-active'
                     />
                     <path
-                      d='M8 14C8 14 9.5 16 12 16C14.5 16 16 14 16 14'
+                      d='M14 2V8H20'
                       stroke='currentColor'
                       strokeWidth='2'
                       strokeLinecap='round'
                       strokeLinejoin='round'
                       className='text-active'
                     />
-                    <path
-                      d='M9 9H9.01'
+                    <line
+                      x1='8'
+                      y1='13'
+                      x2='16'
+                      y2='13'
                       stroke='currentColor'
                       strokeWidth='2'
                       strokeLinecap='round'
-                      strokeLinejoin='round'
                       className='text-active'
                     />
-                    <path
-                      d='M15 9H15.01'
+                    <line
+                      x1='8'
+                      y1='17'
+                      x2='16'
+                      y2='17'
                       stroke='currentColor'
                       strokeWidth='2'
                       strokeLinecap='round'
-                      strokeLinejoin='round'
+                      className='text-active'
+                    />
+                    <line
+                      x1='8'
+                      y1='9'
+                      x2='10'
+                      y2='9'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
                       className='text-active'
                     />
                   </svg>
                 </div>
                 <h3 className='text-xl font-semibold text-textLight mb-3'>
-                  만족도 보장 시스템
+                  외주 제안서
                 </h3>
                 <p className='text-textPrimary'>
-                  98%의 높은 고객 만족도를 자랑합니다. 결과물에 만족하지 못하면
-                  수정 요청이 가능합니다.
+                  작성된 하나의 제안서로 여러 프리랜서에게 쉽게 전달할 수
+                  있어요!
                 </p>
               </motion.div>
             </div>
@@ -348,8 +406,8 @@ const HomeClient = () => {
                 전문 분야
               </h2>
               <p className='text-textPrimary max-w-2xl mx-auto'>
-                다양한 분야의 전문 프리랜서들이 여러분의 프로젝트를 기다리고
-                있습니다
+                다양한 분야, 다양한 레벨의 프리랜서들이 여러분의 프로젝트를
+                기다리고 있어요!
               </p>
             </motion.div>
 
@@ -483,7 +541,7 @@ const HomeClient = () => {
                 </div>
                 <p className='text-textPrimary mb-4'>
                   UI/UX, 그래픽, 웹, 앱, 로고, 일러스트레이션 등 다양한 디자인
-                  분야의 전문가들이 있습니다.
+                  분야의 프리랜서를 만나보세요.
                 </p>
                 <Link
                   href='/products?category=design'
@@ -538,17 +596,13 @@ const HomeClient = () => {
                     height={80}
                     className='rounded-md'
                   />
-                  <div className='absolute -bottom-3 -right-3 bg-active text-white px-2 py-1 rounded-md text-xs'>
-                    VS Code 테마
-                  </div>
                 </div>
                 <h2 className='text-3xl md:text-4xl font-bold text-textLight mb-4'>
                   지금 바로 시작하세요!
                 </h2>
                 <p className='text-textPrimary mb-8 max-w-xl mx-auto'>
-                  MATE와 함께라면 프로젝트를 빠르게 시작하고, 품질 높은 결과물을
-                  얻을 수 있습니다. 지금 무료로 가입하고 프리랜서와
-                  연결해보세요.
+                  MATE와 함께 수수료 없이 프로젝트를 시작하고, 빠르게 결과물을
+                  얻어보아요!
                 </p>
                 <div className='flex flex-col sm:flex-row gap-4 justify-center'>
                   <Link
@@ -594,9 +648,9 @@ const HomeClient = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  빠른 <span className='text-active'>프리랜서</span>
+                  프리랜서들 위한 <span className='text-active'>허브</span>
                   <br />
-                  매칭 서비스
+                  <span className='text-active'>MATE</span>
                 </motion.h2>
                 <motion.p
                   className='text-sm text-textDim'
@@ -612,7 +666,7 @@ const HomeClient = () => {
 
               {/* 이미지 */}
               <motion.div
-                className='relative h-64 w-full my-6'
+                className='relative h-52 w-full my-6'
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
@@ -659,9 +713,7 @@ const HomeClient = () => {
                       />
                     </svg>
                   </div>
-                  <p className='text-textLight text-sm'>
-                    24시간 내 매칭 시스템
-                  </p>
+                  <p className='text-textLight text-sm'>중개없는 빠른 매칭</p>
                 </div>
                 <div className='flex items-center mb-3'>
                   <div className='w-8 h-8 rounded-full bg-active bg-opacity-20 flex items-center justify-center mr-3'>
@@ -690,7 +742,7 @@ const HomeClient = () => {
                       />
                     </svg>
                   </div>
-                  <p className='text-textLight text-sm'>투명한 가격 정책</p>
+                  <p className='text-textLight text-sm'>태그 기반 검색서비스</p>
                 </div>
                 <div className='flex items-center'>
                   <div className='w-8 h-8 rounded-full bg-active bg-opacity-20 flex items-center justify-center mr-3'>
@@ -719,12 +771,14 @@ const HomeClient = () => {
                       />
                     </svg>
                   </div>
-                  <p className='text-textLight text-sm'>98% 고객 만족도</p>
+                  <p className='text-textLight text-sm'>
+                    쉽게 작성하는 외주 제안서
+                  </p>
                 </div>
               </motion.div>
 
               {/* 버튼 영역 */}
-              <div className='mt-auto mb-8'>
+              <div className='mt-4 mb-8'>
                 <motion.button
                   className='w-full bg-active text-white py-3 rounded-md font-medium mb-3'
                   whileTap={{ scale: 0.98 }}
@@ -732,9 +786,6 @@ const HomeClient = () => {
                 >
                   시작하기
                 </motion.button>
-                <p className='text-center text-textDim text-xs'>
-                  스와이프하여 다음 페이지로
-                </p>
               </div>
             </main>
           </motion.div>
@@ -770,7 +821,7 @@ const HomeClient = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  <Link href='/products?category=develop'>
+                  <Link href='/products?category=DEVELOP'>
                     <div className='bg-bgLight rounded-lg overflow-hidden border border-border hover:border-active transition-colors'>
                       <div className='p-4'>
                         <div className='flex items-center mb-3'>
@@ -846,7 +897,7 @@ const HomeClient = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.5 }}
                 >
-                  <Link href='/products?category=design'>
+                  <Link href='/products?category=DESIGN'>
                     <div className='bg-bgLight rounded-lg overflow-hidden border border-border hover:border-active transition-colors'>
                       <div className='p-4'>
                         <div className='flex items-center mb-3'>
@@ -951,11 +1002,13 @@ const HomeClient = () => {
                   <br />
                   &nbsp;&nbsp;<span className='text-textLight'>
                     connect
-                  </span>: <span className='text-success'>빠른 연결</span>,
+                  </span>:{' '}
+                  <span className='text-success'>&quot;reallyFast&quot;</span>,
                   <br />
                   &nbsp;&nbsp;<span className='text-textLight'>
-                    quality
-                  </span>: <span className='text-success'>최고 품질</span>
+                    charge?
+                  </span>:{' '}
+                  <span className='text-success'>&quot;neverEver&quot;</span>
                   <br />
                   &#125;
                 </code>
