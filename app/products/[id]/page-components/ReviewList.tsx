@@ -36,6 +36,8 @@ const ReviewItem = ({ review }: { review: ReviewItemType }) => {
         <div className='flex-shrink-0'>
           <Image
             src={review.profile_url || '/api/placeholder/40/40'}
+            width={40}
+            height={40}
             alt={review.nickname || '익명'}
             className='w-10 h-10 rounded-full object-cover border border-border'
           />
