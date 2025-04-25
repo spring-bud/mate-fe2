@@ -26,8 +26,30 @@ export async function generateMetadata({
   const product = response;
 
   return {
-    title: `${product.title} | MATE`,
+    title: `MATE | ${product.title}`,
     description: product.content.substring(0, 160),
+    openGraph: {
+      title: `MATE | ${product.title}`,
+      description: product.content.substring(0, 160),
+      images: [
+        {
+          url: product.thumbnail_url,
+          width: 1200,
+          height: 630,
+          alt: product.title,
+        },
+      ],
+      url: 'https://mate.springbud.site/',
+      siteName: 'MATE',
+      locale: 'ko_KR',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `MATE | ${product.title}`,
+      description: product.content.substring(0, 160),
+      images: [product.thumbnail_url],
+    },
   };
 }
 

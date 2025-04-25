@@ -28,12 +28,13 @@ export const proposalURL = {
 
 // 리뷰 관련 API 엔드포인트
 export const reviewURL = {
-  list: `${CURRENT_API_VERSION}/review`,
+  list: `${CURRENT_API_VERSION}/reviews`,
+  byFreeLancer: () => `${CURRENT_API_VERSION}/reviews`,
   byProductId: (productId: string) =>
-    `${CURRENT_API_VERSION}/review/${productId}`,
-  create: (productId: string) => `${CURRENT_API_VERSION}/review/${productId}`,
-  update: (reviewId: string) => `${CURRENT_API_VERSION}/review/${reviewId}`,
-  delete: (reviewId: string) => `${CURRENT_API_VERSION}/review/${reviewId}`,
+    `${CURRENT_API_VERSION}/reviews/${productId}`,
+  create: (productId: string) => `${CURRENT_API_VERSION}/reviews/${productId}`,
+  update: (reviewId: string) => `${CURRENT_API_VERSION}/reviews/${reviewId}`,
+  delete: (reviewId: string) => `${CURRENT_API_VERSION}/reviews/${reviewId}`,
 };
 
 // 상품 관련 API 엔드포인트

@@ -11,13 +11,15 @@ const ReviewItemSchema = z.object({
 
 export type ReviewItemType = z.infer<typeof ReviewItemSchema>;
 
-const ReviewItemsArraySchema = z.array(ReviewItemSchema);
+const ReviewItemsArraySchema = z.array(ReviewItemSchema).nullable();
 
 // 리뷰 생성 요청 스키마
 const CreateReviewRequestSchema = z.object({
   star: z.number().min(0).max(5),
   content: z.string(),
 });
+
+export type CreateReviewRequest = z.infer<typeof CreateReviewRequestSchema>;
 
 // 리뷰 수정 요청 스키마
 const UpdateReviewRequestSchema = z.object({
@@ -26,9 +28,14 @@ const UpdateReviewRequestSchema = z.object({
   content: z.string(),
 });
 
+const CreateReviewResponseSchema = UpdateReviewRequestSchema;
+
+export type CreateReviewResponse = z.infer<typeof UpdateReviewRequestSchema>;
+
 export {
   ReviewItemSchema,
   CreateReviewRequestSchema,
   UpdateReviewRequestSchema,
   ReviewItemsArraySchema,
+  CreateReviewResponseSchema,
 };

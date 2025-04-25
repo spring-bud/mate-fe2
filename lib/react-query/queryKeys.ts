@@ -25,7 +25,8 @@ export const queryKeys = {
   // 리뷰 관련 쿼리 키
   reviews: {
     all: ['reviews'] as const,
-    list: () => [...queryKeys.reviews.all, 'list'] as const,
+    byFreeLancer: (userId: string) =>
+      [...queryKeys.reviews.all, 'freeLancer', userId] as const,
     byProduct: (productId: string) =>
       [...queryKeys.reviews.all, 'product', productId] as const,
   },

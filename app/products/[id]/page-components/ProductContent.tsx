@@ -8,6 +8,17 @@ import Image from 'next/image';
 const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
   const { content, product_tags, count, thumbnail_url } = product;
 
+  const handleShare = () => {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        alert('URL이 클립보드에 복사되었습니다!');
+      })
+      .catch((err) => {
+        console.error('URL 복사 실패:', err);
+      });
+  };
+
   return (
     <div className='w-full'>
       {/* 태블릿/모바일에서만 보이는 썸네일 대체 이미지 */}
@@ -49,7 +60,10 @@ const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
       {/* 공유 및 액션 버튼 */}
       <div className='mt-10 pt-6 border-t border-border flex justify-between items-center'>
         <div className='flex gap-2'>
-          <button className='flex items-center gap-1 px-3 py-1.5 bg-bgDark text-textPrimary rounded text-sm hover:bg-hover transition-colors'>
+          <button
+            onClick={handleShare}
+            className='flex items-center gap-1 px-3 py-1.5 bg-bgDark text-textPrimary rounded text-sm hover:bg-hover transition-colors'
+          >
             <svg
               width='18'
               height='18'
