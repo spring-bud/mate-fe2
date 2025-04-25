@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import LogoImage from '@/assets/images/laptop-cat.png';
+import LogoImage from '@/assets/images/404cat.png';
 
 export default function NotFound() {
   const router = useRouter();
