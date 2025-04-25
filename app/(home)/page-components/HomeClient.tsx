@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-// 컴포넌트 임포트
 import {
   HeroSection,
   FeaturesSection,
@@ -13,10 +12,8 @@ import {
 } from './index';
 
 const HomeClient = () => {
-  // 모바일 페이지 상태
   const [currentMobilePage, setCurrentMobilePage] = useState(1);
 
-  // 모바일 페이지 전환 함수
   const goToMobilePage = (pageNumber: number) => {
     setCurrentMobilePage(pageNumber);
   };
