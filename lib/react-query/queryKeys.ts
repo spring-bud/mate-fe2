@@ -49,6 +49,8 @@ export const queryKeys = {
       ] as const,
     detail: (productId: string) =>
       [...queryKeys.products.all, productId] as const,
+    byFreeLancer: (userId: string) =>
+      [...queryKeys.products.all, 'freeLancer', userId] as const,
   },
   tag: {
     all: ['tags'] as const,
