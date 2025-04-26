@@ -2,25 +2,17 @@
 'use client';
 
 import React from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { ko } from 'date-fns/locale';
-
-export interface UserReview {
-  id: number;
-  content: string;
-  rating: number;
-  author: string;
-  created_at: string;
-}
+import Image from 'next/image';
+import { ReviewItemType } from '@/schemas/api/review.schema';
 
 interface UserReviewsListProps {
-  reviews: UserReview[];
+  reviews: ReviewItemType[];
 }
 
-const StarRating = ({ rating }: { rating: number }) => {
+const StarRating = ({ star }: { star: number }) => {
   // 별점을 정수와 소수 부분으로 나눔
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
+  const fullStars = Math.floor(star);
+  const hasHalfStar = star % 1 >= 0.5;
 
   return (
     <div className='flex items-center'>
@@ -77,7 +69,7 @@ const StarRating = ({ rating }: { rating: number }) => {
       )}
 
       <span className='ml-1 typo-caption1 text-textLight'>
-        {rating.toFixed(1)}
+        {star.toFixed(1)}
       </span>
     </div>
   );
@@ -105,22 +97,22 @@ const UserReviewsList: React.FC<UserReviewsListProps> = ({ reviews }) => {
             >
               <div className='flex items-center justify-between mb-3'>
                 <div className='flex items-center gap-2'>
-                  <div className='w-8 h-8 bg-selection rounded-full flex items-center justify-center text-textLight'>
-                    {review.author.charAt(0)}
+                  <div className='w-8 h-8 rounded-full flex items-center justify-center text-textLight'>
+                    <Image
+                      src={review.profile_url || '/api/placeholder/40/40'}
+                      alt={`${review.nickname}'s profile`}
+                      width={40}
+                      height={40}
+                      className='rounded-full'
+                    />
                   </div>
                   <span className='typo-body1 text-textLight'>
-                    {review.author}
+                    {review.nickname}
                   </span>
                 </div>
 
                 <div className='flex items-center gap-2'>
-                  <StarRating rating={review.rating} />
-                  <span className='typo-caption1 text-textDim'>
-                    {formatDistanceToNow(new Date(review.created_at), {
-                      addSuffix: true,
-                      locale: ko,
-                    })}
-                  </span>
+                  <StarRating star={review.star} />
                 </div>
               </div>
 
