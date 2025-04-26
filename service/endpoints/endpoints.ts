@@ -43,6 +43,8 @@ export const productURL = {
   detail: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
   delete: (productId: string) => `${CURRENT_API_VERSION}/products/${productId}`,
   srch: `${CURRENT_API_VERSION}/products/srch`,
+  byFreeLancer: (userId: string) =>
+    `${CURRENT_API_VERSION}/products/users/${userId}`,
 };
 
 // 태그 관련 API 엔드포인트
