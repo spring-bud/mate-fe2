@@ -48,7 +48,7 @@ export const queryKeys = {
         body.size ?? 4,
       ] as const,
     detail: (productId: string) =>
-      [...queryKeys.products.all, productId] as const,
+      [...queryKeys.products.all, 'detail', productId] as const,
     byFreeLancer: (userId: string) =>
       [...queryKeys.products.all, 'freeLancer', userId] as const,
   },
