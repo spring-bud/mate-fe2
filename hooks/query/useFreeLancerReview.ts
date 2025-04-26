@@ -14,7 +14,7 @@ const useFreeLancerReview = (userId: string) => {
       const requestBody = {
         userid: userId,
       };
-      const response = await apiClient.get(reviewURL.byFreeLancer(), {
+      const response = await apiClient.post(reviewURL.byFreeLancer(), {
         params: requestBody,
         schema: ReviewItemsArraySchema,
       });
