@@ -112,12 +112,12 @@ export const ProductByFreeLancerSchema = z.object({
   id: z.number(),
   title: z.string(),
   thumbnail_url: z.string().url(),
-  category: z.string().optional(),
+  category: z.string(),
   created_at: z.string(),
   count: CountSchema,
 });
 
 export type ProductByFreeLancer = z.infer<typeof ProductByFreeLancerSchema>;
-export const ProductByFreeLancerResponseSchema = z.array(
-  ProductByFreeLancerSchema
-);
+export const ProductByFreeLancerResponseSchema = z
+  .array(ProductByFreeLancerSchema)
+  .nullable();
