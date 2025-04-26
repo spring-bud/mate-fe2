@@ -107,3 +107,17 @@ export const TagSearchBodySchema = z.object({
 // 이전 이름과의 호환성을 위한 타입 별칭
 export const ProductSearchParamsSchema = ProductSearchBodySchema;
 export const TagSearchParamsSchema = TagSearchBodySchema;
+
+export const ProductByFreeLancerSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  thumbnail_url: z.string().url(),
+  category: z.string().optional(),
+  created_at: z.string(),
+  count: CountSchema,
+});
+
+export type ProductByFreeLancer = z.infer<typeof ProductByFreeLancerSchema>;
+export const ProductByFreeLancerResponseSchema = z.array(
+  ProductByFreeLancerSchema
+);
