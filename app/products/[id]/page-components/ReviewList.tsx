@@ -60,7 +60,7 @@ const ReviewItem = ({ review }: { review: ReviewItemType }) => {
 };
 
 // 로그인 필요 컴포넌트
-const LoginRequired = () => {
+export const LoginRequired = () => {
   return (
     <div className='relative mt-12 pt-8 border-t border-border'>
       <div className='flex justify-between items-center mb-6'>

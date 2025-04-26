@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import useUserInfo from '@/hooks/query/useUsersInfo';
+import { useUserInfo } from '@/hooks/query/useUsersInfo';
 import ProfileSection from './page-components/ProfileSection';
 import ProposalList from './page-components/ProposalList';
 import LikedProducts from './page-components/LikedProducts';

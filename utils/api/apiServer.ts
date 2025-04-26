@@ -49,3 +49,39 @@ export const apiServerGet = async <R>(
     );
   }
 };
+
+export const apiServerPost = async <R, P = any>(
+  path: string,
+  options?: {
+    params?: P;
+    schema?: z.ZodType<R>;
+  }
+): Promise<R> => {
+  try {
+    const { params, schema } = options || {};
+    const apiHeaders = await getServerApiHeaders();
+
+    let body;
+    if (params instanceof FormData) {
+      // Form데이터 예외처리위한 헤더 삭제(브라우저 자동설정)
+      apiHeaders.delete('Content-Type');
+      body = params;
+    } else if (params) {
+      body = JSON.stringify(params);
+    }
+
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: 'POST',
+      headers: apiHeaders,
+      body,
+      next: { revalidate: 0 },
+    });
+
+    return await handleServerResponse<R>(res, schema);
+  } catch (error: any) {
+    throw new CustomHttpError(
+      error.status || 500,
+      error.message || ErrorMessage.NETWORK_ERROR
+    );
+  }
+};

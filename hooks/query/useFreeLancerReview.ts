@@ -8,14 +8,13 @@ import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';
 
 // 제품의 리뷰 목록을 가져오는 훅
 const useFreeLancerReview = (userId: string) => {
+  const numericUserId = parseInt(userId, 10);
+
   return useQuery({
     queryKey: queryKeys.reviews.byFreeLancer(userId),
     queryFn: async () => {
-      const requestBody = {
-        userid: userId,
-      };
-      const response = await apiClient.get(reviewURL.byFreeLancer(), {
-        params: requestBody,
+      const response = await apiClient.post(reviewURL.byFreeLancer(), {
+        params: { userid: 2 },
         schema: ReviewItemsArraySchema,
       });
       return response;

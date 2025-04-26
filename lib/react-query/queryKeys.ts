@@ -11,6 +11,7 @@ export const queryKeys = {
   // 사용자 관련 쿼리 키
   users: {
     all: ['users'] as const,
+    myInfo: () => [...queryKeys.users.all, 'myInfo'] as const,
     detail: (userId: string) => [...queryKeys.users.all, userId] as const,
   },
 
@@ -47,7 +48,9 @@ export const queryKeys = {
         body.size ?? 4,
       ] as const,
     detail: (productId: string) =>
-      [...queryKeys.products.all, productId] as const,
+      [...queryKeys.products.all, 'detail', productId] as const,
+    byFreeLancer: (userId: string) =>
+      [...queryKeys.products.all, 'freeLancer', userId] as const,
   },
   tag: {
     all: ['tags'] as const,

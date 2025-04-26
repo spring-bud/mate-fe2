@@ -4,66 +4,28 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import mockImg from '@/assets/images/tem-user.png';
+import { User } from '@/schemas/api/user.schema';
 
-interface UserStack {
-  stack_id: number;
-  name: string;
-}
-
-export interface UserProfileDatass {
-  user_id: number;
-  user_status: string;
-  nickname: string;
-  profile_url: string;
-  job_type: string;
-  job_year: number;
-  intro: string;
-  email: string;
-  contact: string;
-  github_url: string;
-  blog_url: string;
-  user_stacks: UserStack[];
-}
-
-interface UserProfileCardProps {
-  userData: UserProfileDatass;
-}
-
-const JobTypeBadge = ({ jobType }: { jobType: string }) => {
-  const getJobTypeInfo = (type: string): { label: string; bgColor: string } => {
-    switch (type) {
-      case 'DEVELOPER':
-        return { label: '개발자', bgColor: 'bg-blue-600' };
-      case 'DESIGNER':
-        return { label: '디자이너', bgColor: 'bg-purple-600' };
-      default:
-        return { label: '프리랜서', bgColor: 'bg-gray-600' };
-    }
-  };
-
-  const { label, bgColor } = getJobTypeInfo(jobType);
-
+const JobTypeBadge = ({ jobType }: { jobType: string | null }) => {
   return (
-    <span className={`${bgColor} text-white text-xs px-2 py-1 rounded-full`}>
-      {label}
+    <span className={`bg-blue-600 text-white text-xs px-2 py-1 rounded-full`}>
+      {jobType}
     </span>
   );
 };
 
-const UserProfileCardsss: React.FC<UserProfileCardProps> = ({ userData }) => {
+const UserProfileCardsss = ({ userInfo }: { userInfo: User }) => {
   const {
     nickname,
     profile_url,
     job_type,
     job_year,
-    intro,
     email,
     contact,
     github_url,
     blog_url,
     user_stacks,
-  } = userData;
+  } = userInfo;
 
   return (
     <div className='bg-bgLight border border-border rounded-lg overflow-hidden'>
@@ -74,7 +36,7 @@ const UserProfileCardsss: React.FC<UserProfileCardProps> = ({ userData }) => {
           <div className='relative mt-4 w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-selection flex-shrink-0 overflow-hidden'>
             <div className='w-full h-full relative'>
               <Image
-                src={mockImg}
+                src={profile_url}
                 alt={nickname}
                 fill
                 className='object-cover'
@@ -110,11 +72,6 @@ const UserProfileCardsss: React.FC<UserProfileCardProps> = ({ userData }) => {
               ))}
             </div>
           </div>
-        </div>
-
-        {/* 자기소개 */}
-        <div className='mt-6 p-4'>
-          <p className='typo-body1 text-textDim'>{intro}</p>
         </div>
       </div>
 
