@@ -41,7 +41,7 @@ const UserPostsList: React.FC<UserPostsListProps> = ({ posts }) => {
           {posts.map((post) => (
             <Link
               key={post.id}
-              href={`/posts/${post.id}`}
+              href={`/products/${post.id}`}
               className='group border border-border rounded-lg overflow-hidden hover:border-active transition-colors'
             >
               {/* 썸네일 이미지 */}
