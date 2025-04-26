@@ -11,6 +11,7 @@ export const queryKeys = {
   // 사용자 관련 쿼리 키
   users: {
     all: ['users'] as const,
+    myInfo: () => [...queryKeys.users.all, 'myInfo'] as const,
     detail: (userId: string) => [...queryKeys.users.all, userId] as const,
   },
 
