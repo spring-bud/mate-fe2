@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MATE - 개발자와 디자이너를 위한 프리랜서 허브 🚀
 
-## Getting Started
+안녕하세요! **MATE**는 개발자와 디자이너를 위한 프리랜서 허브 플랫폼입니다. 여러분의 재능을 필요로 하는 프로젝트와 빠르게 연결해드립니다! ✨
 
-First, run the development server:
+## 🌟 소개
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+MATE는 개발자와 디자이너를 프로젝트와 외주 기회에 연결해주는 허브입니다. 쉽고 빠른 매칭을 목표로 하고있어요!
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![MATE 플랫폼](https://mate.springbud.site/laptop-cat.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ 기술 스택
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **프론트엔드**: Next.js 15, React 19, TypeScript
+- **상태 관리**: Zustand, React Query (TanStack Query)
+- **스타일링**: TailwindCSS
+- **폼 관리**: React Hook Form, Zod
+- **에디터**: TipTap
+- **애니메이션**: Framer Motion
+- **테스팅**: Jest, React Testing Library
 
-## Learn More
+## ✨ 주요 기능
 
-To learn more about Next.js, take a look at the following resources:
+- 🔍 **프리랜서 프로필 검색**: 다양한 기술 스택과 경력을 가진 프리랜서 검색
+- 💼 **프로젝트 게시 및 지원**: 프로젝트를 게시하고 적합한 프리랜서를 찾거나, 프리랜서로서 프로젝트에 지원
+- 🌐 **실시간 커뮤니케이션**: 클라이언트와 프리랜서 간의 다이렉트 채팅 지원
+- ⭐ **리뷰 시스템**: 프로젝트 완료 후 상호 리뷰를 통한 신뢰성 확보
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌐 배포
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+현재 프로덕션 서버는 다음 주소에서 확인하실 수 있어요:
+[https://mate.springbud.site/](https://mate.springbud.site/)
