@@ -6,9 +6,9 @@ import { apiClient } from '@/utils/api/api';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 
 // 사용자 정보를 가져오는 훅 (장기 캐싱 적용)
-const useUserInfo = (userId: string) => {
+export const useUserInfo = (userId: string) => {
   return useQuery({
-    queryKey: queryKeys.users.detail(userId),
+    queryKey: queryKeys.users.myInfo(),
     queryFn: async () => {
       const response = await apiClient.get(userURL.info(userId), {});
       return response;
@@ -25,4 +25,12 @@ const useUserInfo = (userId: string) => {
   });
 };
 
-export default useUserInfo;
+export const useFreeLancerInfo = (userId: string) => {
+  return useQuery({
+    queryKey: queryKeys.users.detail(userId),
+    queryFn: async () => {
+      const response = await apiClient.get(userURL.info(userId), {});
+      return response;
+    },
+  });
+};
