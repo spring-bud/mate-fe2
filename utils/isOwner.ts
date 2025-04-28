@@ -13,7 +13,6 @@ function isOwner(ownerId: number): boolean {
 
     // 토큰이 없는 경우 처리
     if (!token) {
-      console.error('액세스 토큰이 없습니다.');
       return false;
     }
 

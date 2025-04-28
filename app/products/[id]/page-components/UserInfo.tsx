@@ -4,10 +4,15 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductDetailResponse } from '@/hooks/query/useProductDetail';
+import isOwner from '@/utils/isOwner';
 
 // 작성자 정보 표시 컴포넌트
 const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
   const { owner, product_tags, thumbnail_url } = product;
+
+  const isProductOwner = isOwner(Number(owner.user_id));
+
+  const handleStartChat = async () => {};
 
   return (
     <div className='w-full mt-0 md:mt-0'>
@@ -45,12 +50,38 @@ const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
         </div>
 
         <div className='flex gap-2 mb-4'></div>
-        <Link
-          href={`/user/${owner.user_id}`}
-          className='w-full py-2 bg-active text-white rounded flex items-center justify-center hover:bg-blue-600 transition-colors'
-        >
-          프로필 보기
-        </Link>
+
+        {/* 버튼 그룹 */}
+        <div className='flex flex-col space-y-2'>
+          <Link
+            href={`/user/${owner.user_id}`}
+            className='w-full py-2 bg-active text-white rounded flex items-center justify-center hover:bg-blue-600 transition-colors'
+          >
+            프로필 보기
+          </Link>
+
+          {!isProductOwner && (
+            <button
+              onClick={handleStartChat}
+              className='w-full py-2 bg-purple-400 text-bgDark rounded flex items-center justify-center gap-2 hover:bg-green-400 transition-colors'
+            >
+              <svg
+                width='18'
+                height='18'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='inline-block'
+              >
+                <path d='M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z'></path>
+              </svg>
+              <span>채팅</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 태그 섹션 */}
