@@ -63,12 +63,13 @@ export const chatURL = {
   createRoom: (productId: string) =>
     `${CURRENT_API_VERSION}/chat/create/room/${productId}`,
   sendMessage: `${CURRENT_API_VERSION}/chat/chat`,
-  getMessages: `${CURRENT_API_VERSION}/chat/roomToken/messages`,
-  getRecentMessages: `${CURRENT_API_VERSION}/chat/roomToken/messages/recent`,
+  getMessages: (roomToken: string) =>
+    `${CURRENT_API_VERSION}/chat/${roomToken}/messages`,
+  getRecentMessages: (roomToken: string) =>
+    `${CURRENT_API_VERSION}/chat/${roomToken}/messages/recent`,
   getRoomList: `${CURRENT_API_VERSION}/chat/chatRoomList`,
   sendGreeting: `${CURRENT_API_VERSION}/chat/greet`,
 };
-
 // 전체 URL 묶음 내보내기
 export const URLs = {
   user: userURL,
