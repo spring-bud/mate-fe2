@@ -27,7 +27,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 // 쿠키에서 액세스 토큰을 가져오는 함수
-const getAccessToken = (): string | undefined => {
+export const getAccessToken = (): string | undefined => {
   if (typeof document === 'undefined') return undefined;
 
   return document.cookie
