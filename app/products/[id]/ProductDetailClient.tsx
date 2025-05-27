@@ -6,6 +6,7 @@ import UserInfo from './page-components/UserInfo';
 import ProductContent from './page-components/ProductContent';
 import ReviewList from './page-components/ReviewList';
 import isOwner from '@/utils/isOwner';
+import { useRouter } from 'next/navigation';
 
 const ProductDetailErrorState = () => {
   return (
@@ -44,6 +45,7 @@ const ProductDetailClient = () => {
   const productId = typeof params.id === 'string' ? params.id : '';
 
   const { data: product, error } = useProductDetail(productId);
+  const router = useRouter();
 
   const isProductOwner = product?.owner?.user_id
     ? isOwner(Number(product.owner.user_id))
@@ -54,8 +56,14 @@ const ProductDetailClient = () => {
   }
 
   const handleEdit = () => {
-    // 수정 처리 로직
-    console.log('Edit product:', productId);
+    // 소유자 확인
+    if (!isProductOwner) {
+      alert('수정 권한이 없습니다. 상품 소유자만 수정할 수 있습니다.');
+      return;
+    }
+
+    // 수정 페이지로 이동
+    router.push(`/products/edit/${productId}`);
   };
 
   const handleDelete = () => {
