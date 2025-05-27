@@ -121,3 +121,13 @@ export type ProductByFreeLancer = z.infer<typeof ProductByFreeLancerSchema>;
 export const ProductByFreeLancerResponseSchema = z
   .array(ProductByFreeLancerSchema)
   .nullable();
+
+export const productUpdateSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+  thumbnail_url: z.string().url(),
+  category: z.string(),
+  tags: z.array(TagSchema),
+});
+
+export type ProductUpdate = z.infer<typeof productUpdateSchema>;

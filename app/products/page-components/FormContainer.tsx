@@ -102,7 +102,13 @@ const PostFormContainer = ({
       </div>
 
       {/* 태그 입력 */}
-      <TagInput name='tags' control={control} error={errors.tags?.message} />
+      <TagInput
+        name='tags'
+        control={control}
+        label='태그'
+        placeholder='태그를 입력하고 Enter를 누르세요 (최대 5개)'
+        error={errors.tags?.message}
+      />
 
       {/* 버튼 영역 */}
       <div className='flex justify-end space-x-3 pt-4'>

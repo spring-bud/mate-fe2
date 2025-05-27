@@ -1,87 +1,57 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PostFormData } from '@/schemas/validations/postForm.schema';
 import PostFormContainer from '../../page-components/FormContainer';
-import { getProductMockData } from './page-components/mockData';
+import useProductDetail from '@/hooks/query/useProductDetail';
+import useUpdateProduct from '@/hooks/mutation/useUpdateProduct';
+import isOwner from '@/utils/isOwner';
 
 export default function EditClientComponent() {
   const router = useRouter();
   const params = useParams();
   const productId = params.id as string;
 
-  // api 관련 추후 전부 tanstack mutation처리
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [productData, setProductData] = useState<PostFormData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { data: product } = useProductDetail(productId);
+  const updateProductMutation = useUpdateProduct();
 
-  const loadProductData = async () => {
-    setIsLoading(true);
-    setError(null);
+  // 태그를 name으로 변환
+  const initialProductData = product
+    ? {
+        ...product,
+        tags: product.product_tags?.map((tag) => tag.name) || [],
+      }
+    : {};
 
-    try {
-      const mockData = getProductMockData(productId);
+  const isProductOwner = product?.owner?.user_id
+    ? isOwner(Number(product.owner.user_id))
+    : false;
 
-      // 데이터 설정 및 캐싱
-      setProductData(mockData);
-      localStorage.setItem(`product_${productId}`, JSON.stringify(mockData));
-    } catch (err) {
-      console.error('데이터 로딩 오류:', err);
-      setError('상품 정보를 불러오는데 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
-    loadProductData();
-  }, [productId]);
+    if (product && !isProductOwner) {
+      alert('수정 권한이 없습니다. 상품 소유자만 수정할 수 있습니다.');
+      router.back();
+    }
+  }, [product, isProductOwner, router]);
 
-  // 폼 제출 핸들러
+  if (!product) {
+    return (
+      <div className='flex justify-center items-center min-h-[400px]'>
+        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-active'></div>
+      </div>
+    );
+  }
+
   const handleSubmit = async (data: PostFormData) => {
     try {
-      setIsSubmitting(true);
-
-      // API 호출 시뮬레이션
-      console.log('제출된 데이터:', data);
-
-      /* 실제 API 호출 예시
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      updateProductMutation.mutate({
+        productId,
+        data,
       });
-      
-      if (!response.ok) {
-        throw new Error('상품 수정에 실패했습니다.');
-      }
-      
-      const result = await response.json();
-      */
-
-      // 성공 시뮬레이션 (2초 지연)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // 캐시 업데이트
-      localStorage.setItem(`product_${productId}`, JSON.stringify(data));
-
-      // 성공 알림
-      alert('상품이 성공적으로 수정되었습니다.');
-
-      // 상품 상세 페이지로 이동
-      router.push(`/products/${productId}`);
-      // 또는 목록 페이지로 이동
-      // router.push('/products');
     } catch (error) {
       console.error('상품 수정 오류:', error);
       alert('상품 수정 중 오류가 발생했습니다.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -92,41 +62,14 @@ export default function EditClientComponent() {
     }
   };
 
-  // 로딩 중 표시
-  if (isLoading) {
-    return (
-      <div className='flex justify-center items-center min-h-[400px]'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-active'></div>
-      </div>
-    );
-  }
-
-  // 오류 표시
-  if (error || !productData) {
-    return (
-      <div className='max-w-4xl mx-auto py-8 px-4'>
-        <div className='bg-error bg-opacity-10 border border-error text-error p-6 rounded-lg text-center'>
-          <h2 className='typo-head3 mb-2'>데이터 로딩 오류</h2>
-          <p>{error || '상품 정보를 찾을 수 없습니다.'}</p>
-          <button
-            onClick={() => loadProductData()}
-            className='mt-4 px-4 py-2 bg-active text-white rounded-md hover:bg-opacity-90 transition-colors'
-          >
-            다시 시도
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className='max-w-4xl mx-auto py-8 px-4'>
       <h1 className='typo-head2 mb-6'>프로덕트 수정</h1>
 
       <PostFormContainer
-        initialData={productData}
+        initialData={initialProductData}
         onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
+        isSubmitting={updateProductMutation.isPending}
         submitButtonText='수정 완료'
         cancelButtonText='취소'
         onCancel={handleCancel}
