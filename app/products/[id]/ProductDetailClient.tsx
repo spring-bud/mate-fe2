@@ -5,6 +5,7 @@ import useProductDetail from '@/hooks/query/useProductDetail';
 import UserInfo from './page-components/UserInfo';
 import ProductContent from './page-components/ProductContent';
 import ReviewList from './page-components/ReviewList';
+import isOwner from '@/utils/isOwner';
 
 const ProductDetailErrorState = () => {
   return (
@@ -44,14 +45,74 @@ const ProductDetailClient = () => {
 
   const { data: product, error } = useProductDetail(productId);
 
+  const isProductOwner = product?.owner?.user_id
+    ? isOwner(Number(product.owner.user_id))
+    : false;
+
   if (error || !product) {
     return <ProductDetailErrorState />;
   }
 
+  const handleEdit = () => {
+    // 수정 처리 로직
+    console.log('Edit product:', productId);
+  };
+
+  const handleDelete = () => {
+    // 삭제 처리 로직
+    console.log('Delete product:', productId);
+  };
+
   return (
     <div className='flex flex-col gap-8 mx-auto max-w-screen-xl sm:p-4 xs:p-4'>
-      <div className='flex justify-between items-center'>
-        <div className='typo-head1 mb-3'>{product.title}</div>
+      <div className='flex flex-col sm:flex-row justify-between sm:items-center gap-2'>
+        <div className='flex items-center'>
+          <h1 className='typo-head1 mb-3'>{product.title}</h1>
+          {isProductOwner && (
+            <div className='flex items-center ml-3 space-x-1 xs:ml-2'>
+              {/* 수정 아이콘 */}
+              <button
+                onClick={handleEdit}
+                className='p-1.5 rounded-md text-textDim hover:text-textPrimary hover:bg-hover transition-colors'
+                aria-label='수정'
+                title='수정'
+              >
+                <svg
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    d='M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z'
+                    fill='currentColor'
+                  />
+                </svg>
+              </button>
+              {/* 삭제 아이콘 */}
+              <button
+                onClick={handleDelete}
+                className='p-1.5 rounded-md text-textDim hover:text-error hover:bg-hover transition-colors'
+                aria-label='삭제'
+                title='삭제'
+              >
+                <svg
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    d='M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z'
+                    fill='currentColor'
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
         <div className='flex items-center gap-3'>
           <span className='px-3 py-1 bg-active bg-opacity-20 text-active rounded text-sm font-medium'>
             {product.category}
