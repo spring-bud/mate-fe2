@@ -124,17 +124,6 @@ const parseResponseData = async (res: Response) => {
   throw new Error(`Unsupported response type: ${contentType}`);
 };
 
-// 커스텀 HTTP 에러
-export class CustomHttpError extends Error {
-  status: number;
-
-  constructor(status: number, message: any) {
-    super(typeof message === 'string' ? message : JSON.stringify(message));
-    this.status = status;
-    this.name = 'CustomHttpError';
-  }
-}
-
 // 응답 처리 함수
 const handleResponse = async <R>(
   res: Response,
@@ -147,7 +136,8 @@ const handleResponse = async <R>(
   }
 ): Promise<R> => {
   try {
-    if (res.status === 204) {
+    // 204, 201 등 특수 상태 코드 처리
+    if (res.status === 204 || res.status === 201) {
       return {} as R;
     }
 
@@ -155,10 +145,9 @@ const handleResponse = async <R>(
     if (res.status === 401) {
       let errorData;
       try {
-        // 응답 본문 파싱 시도
         errorData = await res.json();
       } catch (e) {
-        errorData = { message: 'Token error' };
+        errorData = { message: '인증 오류가 발생했습니다.' };
       }
 
       // 토큰 만료 확인 및 재요청 로직
@@ -222,15 +211,18 @@ const handleResponse = async <R>(
           refreshPromise = null;
           processQueue(refreshError as Error);
 
-          // 로그인 페이지로 이동 또는 다른 처리
+          // 로그인 페이지로 이동
           if (typeof window !== 'undefined') {
             window.location.href = '/login';
           }
-          throw new CustomHttpError(401, '로그인이 필요합니다');
+
+          // 표준 에러 throw
+          throw new Error('로그인이 필요합니다');
         }
       }
 
-      throw new CustomHttpError(401, errorData?.message || 'Unauthorized');
+      // 인증 관련 에러
+      throw new Error(errorData?.message || '인증되지 않았습니다');
     }
 
     const responseBody = await parseResponseData(res);
@@ -245,8 +237,8 @@ const handleResponse = async <R>(
           const validated = apiSchema.parse(responseBody);
           return validated.data as R;
         } catch (validationError) {
-          console.error('Schema validation error:', validationError);
-          throw new Error('API response format is invalid');
+          console.error('스키마 검증 오류:', validationError);
+          throw new Error('API 응답 형식이 유효하지 않습니다');
         }
       } else {
         // 스키마가 없는 경우, data 필드 자동 추출
@@ -261,6 +253,7 @@ const handleResponse = async <R>(
       }
     }
 
+    // 오류 응답 처리
     let errorMessage = responseBody;
 
     if (
@@ -270,16 +263,15 @@ const handleResponse = async <R>(
     ) {
       errorMessage = responseBody.message;
     } else if (res.status === 404) {
-      errorMessage = ErrorMessage.BAD_REQUEST;
+      errorMessage = '요청한 리소스를 찾을 수 없습니다';
     }
 
-    throw new CustomHttpError(res.status, errorMessage);
+    // 표준 Error 객체로 throw
+    throw new Error(errorMessage);
   } catch (error: any) {
-    if (error instanceof CustomHttpError) {
-      throw error;
-    }
+    // 네트워크 오류 등 처리
     if (typeof window !== 'undefined') {
-      throw new CustomHttpError(error.status || 500, error.message);
+      throw new Error(error.message || '네트워크 오류가 발생했습니다');
     }
     return res.status as R;
   }
@@ -332,10 +324,7 @@ export const apiClient = {
         requestInit,
       });
     } catch (error: any) {
-      throw new CustomHttpError(
-        error.status || 500,
-        error.message || ErrorMessage.NETWORK_ERROR
-      );
+      throw new Error(error.message || '네트워크 요청 중 오류가 발생했습니다');
     }
   },
 
@@ -366,10 +355,7 @@ export const apiClient = {
         requestInit,
       });
     } catch (error: any) {
-      throw new CustomHttpError(
-        error.status || 500,
-        error.message || ErrorMessage.NETWORK_ERROR
-      );
+      throw new Error(error.message || '네트워크 요청 중 오류가 발생했습니다');
     }
   },
 
@@ -400,10 +386,7 @@ export const apiClient = {
         requestInit,
       });
     } catch (error: any) {
-      throw new CustomHttpError(
-        error.status || 500,
-        error.message || ErrorMessage.NETWORK_ERROR
-      );
+      throw new Error(error.message || '네트워크 요청 중 오류가 발생했습니다');
     }
   },
 
@@ -434,10 +417,7 @@ export const apiClient = {
         requestInit,
       });
     } catch (error: any) {
-      throw new CustomHttpError(
-        error.status || 500,
-        error.message || ErrorMessage.NETWORK_ERROR
-      );
+      throw new Error(error.message || '네트워크 요청 중 오류가 발생했습니다');
     }
   },
 };
