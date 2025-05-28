@@ -27,7 +27,7 @@ const useUpdateProduct = () => {
     },
     onSuccess: (_, { productId }) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.products.detail(productId),
+        queryKey: queryKeys.products.all,
       });
 
       router.push(`/products/${productId}`);

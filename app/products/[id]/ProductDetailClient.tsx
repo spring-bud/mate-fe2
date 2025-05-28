@@ -7,6 +7,7 @@ import ProductContent from './page-components/ProductContent';
 import ReviewList from './page-components/ReviewList';
 import isOwner from '@/utils/isOwner';
 import { useRouter } from 'next/navigation';
+import useDeleteProducts from '@/hooks/mutation/useDeleteProducts';
 
 const ProductDetailErrorState = () => {
   return (
@@ -51,24 +52,34 @@ const ProductDetailClient = () => {
     ? isOwner(Number(product.owner.user_id))
     : false;
 
+  const productDelete = useDeleteProducts();
+
   if (error || !product) {
     return <ProductDetailErrorState />;
   }
 
   const handleEdit = () => {
-    // 소유자 확인
     if (!isProductOwner) {
-      alert('수정 권한이 없습니다. 상품 소유자만 수정할 수 있습니다.');
+      alert('수정 권한이 없습니다. 작성자만 수정할 수 있습니다.');
       return;
     }
 
-    // 수정 페이지로 이동
     router.push(`/products/edit/${productId}`);
   };
 
   const handleDelete = () => {
-    // 삭제 처리 로직
-    console.log('Delete product:', productId);
+    if (!isProductOwner) {
+      alert('삭제 권한이 없습니다. 작성자만 삭제할 수 있습니다.');
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      '정말로 이 상품을 삭제하시겠습니까? 삭제된 글은 복구할 수 없습니다.'
+    );
+
+    if (confirmDelete) {
+      productDelete.mutate(productId);
+    }
   };
 
   return (
