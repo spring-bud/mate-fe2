@@ -58,8 +58,11 @@ const ProductGrid = ({ products }: ProductGridProps) => {
                   </h3>
 
                   {/* 내용 */}
-                  <p className='typo-body2 text-textDim mb-3 line-clamp-2'>
-                    {product.content.replace(/<[^>]*>/g, '')}
+                  <p className='typo-body2 text-textDim mb-3'>
+                    {product.content.replace(/<[^>]*>/g, '').length > 40
+                      ? product.content.replace(/<[^>]*>/g, '').slice(0, 20) +
+                        '...'
+                      : product.content.replace(/<[^>]*>/g, '')}
                   </p>
 
                   {/* 태그 */}
