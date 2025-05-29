@@ -11,6 +11,7 @@ import { apiClient } from '@/utils/api/api';
 import { productURL, reviewURL } from '@/service/endpoints/endpoints';
 import { ProductDetailSchema } from '@/schemas/api/product.schema';
 import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';
+import { apiServerGet } from '@/utils/api/apiServer';
 
 export async function generateMetadata({
   params,
@@ -67,7 +68,7 @@ export default async function ProductDetailPage({
   await queryClient.prefetchQuery({
     queryKey: queryKeys.products.detail(productId),
     queryFn: async () => {
-      const response = await apiClient.get(productURL.detail(productId), {
+      const response = await apiServerGet(productURL.detail(productId), {
         schema: ProductDetailSchema,
       });
       return response;
@@ -78,7 +79,7 @@ export default async function ProductDetailPage({
   await queryClient.prefetchQuery({
     queryKey: queryKeys.reviews.byProduct(productId),
     queryFn: async () => {
-      const response = await apiClient.get(reviewURL.byProductId(productId), {
+      const response = await apiServerGet(reviewURL.byProductId(productId), {
         schema: ReviewItemsArraySchema,
       });
       return response;
