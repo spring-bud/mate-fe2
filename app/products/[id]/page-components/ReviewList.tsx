@@ -5,7 +5,6 @@ import useProductReviews from '@/hooks/query/useProductReviews';
 import { ReviewItemType } from '@/schemas/api/review.schema';
 import Image from 'next/image';
 import KakaoLoginButton from '@/components/ui/button/KakaoLoginButton';
-import { CustomHttpError } from '@/utils/api/api';
 import ReviewModal from './ReviewModal';
 
 // 별점 컴포넌트
@@ -121,7 +120,8 @@ const ReviewList = ({ productId }: { productId: string }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 401 인증 오류 처리
-  if (error && (error as CustomHttpError).status === 401) {
+  /**@todo errorcode 정리필요 */
+  if (error) {
     return <LoginRequired />;
   }
 

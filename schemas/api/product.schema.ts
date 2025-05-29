@@ -24,7 +24,13 @@ const CountSchema = z.object({
 });
 
 // 제품 상태 enum
-const ProductStatusEnum = z.enum(['ACTIVE', 'INACTIVE', 'PENDING', 'SOLD']);
+const ProductStatusEnum = z.enum([
+  'ACTIVE',
+  'INACTIVE',
+  'PENDING',
+  'SOLD',
+  'DELETED',
+]);
 
 // 제품 카테고리 enum
 const ProductCategoryEnum = z.enum(['DEVELOP', 'DESIGN']);
