@@ -142,7 +142,10 @@ const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
 
         <div className='flex-1 order-1 md:order-2'>
           <ProductContent product={product} />
-          <ReviewList productId={productId} isOwner={isOwner} />
+          <ReviewList
+            productId={productId}
+            productOwnerId={product.owner.user_id}
+          />
         </div>
       </div>
     </div>

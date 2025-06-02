@@ -1,14 +1,29 @@
 import Image from 'next/image';
 import StarRating from './StarRating';
 import { ReviewItemType } from '@/schemas/api/review.schema';
+import { useAuthStore } from '@/store/authStore';
+import useDeleteReview from '@/hooks/mutation/useDeleteReview';
 
 const ReviewItem = ({
   review,
-  isOwner,
+  productOwnerId,
 }: {
   review: ReviewItemType;
-  isOwner: boolean;
+  productOwnerId: number;
 }) => {
+  const { user } = useAuthStore();
+  const isReviewOwner = user?.user_id === review.review_user_id;
+  const deleteReviewMutation = useDeleteReview();
+
+  const handleDeleteReview = () => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      deleteReviewMutation.mutate({
+        reviewId: review.id,
+        productOwnerId: productOwnerId,
+      });
+    }
+  };
+
   return (
     <div className='border-b border-border py-6 first:pt-0'>
       <div className='flex items-start gap-4'>
@@ -27,7 +42,7 @@ const ReviewItem = ({
               {review.nickname || '익명'}
             </div>
             <div>
-              {isOwner && (
+              {isReviewOwner && (
                 <>
                   <button
                     className='p-1.5 rounded-md text-textDim hover:text-textPrimary hover:bg-hover transition-colors'
@@ -49,6 +64,7 @@ const ReviewItem = ({
                   </button>
                   {/* 삭제 아이콘 */}
                   <button
+                    onClick={handleDeleteReview}
                     className='p-1.5 rounded-md text-textDim hover:text-error hover:bg-hover transition-colors'
                     aria-label='삭제'
                     title='삭제'

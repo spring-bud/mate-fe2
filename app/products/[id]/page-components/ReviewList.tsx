@@ -9,10 +9,10 @@ import LoginRequired from './LoginRequired';
 // 리뷰 목록 컴포넌트
 const ReviewList = ({
   productId,
-  isOwner,
+  productOwnerId,
 }: {
   productId: string;
-  isOwner: boolean;
+  productOwnerId: number;
 }) => {
   const { data: reviews, isLoading, error } = useProductReviews(productId);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,7 +93,11 @@ const ReviewList = ({
       {reviews && reviews.length > 0 ? (
         <div className='space-y-0'>
           {reviews.map((review) => (
-            <ReviewItem key={review.id} review={review} isOwner={isOwner} />
+            <ReviewItem
+              key={review.id}
+              review={review}
+              productOwnerId={productOwnerId}
+            />
           ))}
         </div>
       ) : (
