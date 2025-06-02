@@ -5,7 +5,6 @@ import useProductDetail from '@/hooks/query/useProductDetail';
 import UserInfo from './page-components/UserInfo';
 import ProductContent from './page-components/ProductContent';
 import ReviewList from './page-components/ReviewList';
-import isOwner from '@/utils/isOwner';
 import { useRouter } from 'next/navigation';
 import useDeleteProducts from '@/hooks/mutation/useDeleteProducts';
 
@@ -41,16 +40,12 @@ const ProductDetailErrorState = () => {
   );
 };
 
-const ProductDetailClient = () => {
+const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
   const params = useParams();
   const productId = typeof params.id === 'string' ? params.id : '';
 
   const { data: product, error } = useProductDetail(productId);
   const router = useRouter();
-
-  const isProductOwner = product?.owner?.user_id
-    ? isOwner(Number(product.owner.user_id))
-    : false;
 
   const productDelete = useDeleteProducts();
 
@@ -59,7 +54,7 @@ const ProductDetailClient = () => {
   }
 
   const handleEdit = () => {
-    if (!isProductOwner) {
+    if (!isOwner) {
       alert('수정 권한이 없습니다. 작성자만 수정할 수 있습니다.');
       return;
     }
@@ -68,7 +63,7 @@ const ProductDetailClient = () => {
   };
 
   const handleDelete = () => {
-    if (!isProductOwner) {
+    if (!isOwner) {
       alert('삭제 권한이 없습니다. 작성자만 삭제할 수 있습니다.');
       return;
     }
@@ -87,7 +82,7 @@ const ProductDetailClient = () => {
       <div className='flex flex-col sm:flex-row justify-between sm:items-center gap-2'>
         <div className='flex items-center'>
           <h1 className='typo-head1 mb-3'>{product.title}</h1>
-          {isProductOwner && (
+          {isOwner && (
             <div className='flex items-center ml-3 space-x-1 xs:ml-2'>
               {/* 수정 아이콘 */}
               <button
@@ -141,13 +136,13 @@ const ProductDetailClient = () => {
       <div className='flex flex-col md:flex-row gap-8'>
         <div className='md:w-72 w-full order-2 md:order-1'>
           <div className='md:sticky md:top-20'>
-            <UserInfo product={product} />
+            <UserInfo product={product} isOwner={isOwner} />
           </div>
         </div>
 
         <div className='flex-1 order-1 md:order-2'>
           <ProductContent product={product} />
-          <ReviewList productId={productId} />
+          <ReviewList productId={productId} isOwner={isOwner} />
         </div>
       </div>
     </div>

@@ -3,13 +3,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductDetailResponse } from '@/hooks/query/useProductDetail';
-import isOwner from '@/utils/isOwner';
 
 // 작성자 정보 표시 컴포넌트
-const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
+const UserInfo = ({
+  product,
+  isOwner,
+}: {
+  product: ProductDetailResponse;
+  isOwner: boolean;
+}) => {
   const { owner, product_tags, thumbnail_url } = product;
-
-  const isProductOwner = isOwner(Number(owner.user_id));
 
   // 채팅 시작 처리 함수
   const handleStartChat = async () => {
@@ -22,7 +25,7 @@ const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
       <div className='mb-6 overflow-hidden rounded-lg hidden md:block'>
         <div className='w-full h-48 bg-bgDark flex items-center justify-center'>
           <Image
-            src={thumbnail_url || '/assets/images/laptop-cat.png'} // 기본 이미지 사용
+            src={thumbnail_url || '/assets/images/laptop-cat.png'}
             alt='thumbnail'
             className='w-full h-full object-cover'
             width={0}
@@ -37,7 +40,7 @@ const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
         <div className='flex items-center gap-4 mb-4'>
           <div className='relative w-16 h-16 rounded-full overflow-hidden border border-border'>
             <Image
-              src={owner.profile_url || '/assets/images/drawing-cat.png'} // 기본 이미지 사용
+              src={owner.profile_url || '/assets/images/drawing-cat.png'}
               alt={owner.nickname}
               fill
               className='object-cover'
@@ -62,7 +65,7 @@ const UserInfo = ({ product }: { product: ProductDetailResponse }) => {
             프로필 보기
           </Link>
 
-          {!isProductOwner && (
+          {!isOwner && (
             <button
               onClick={handleStartChat}
               className='w-full py-2 bg-purple-400 hover:bg-green-400 text-bgDark rounded flex items-center justify-center gap-2 transition-colors'

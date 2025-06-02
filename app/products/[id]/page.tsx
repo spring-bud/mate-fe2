@@ -12,6 +12,7 @@ import { productURL, reviewURL } from '@/service/endpoints/endpoints';
 import { ProductDetailSchema } from '@/schemas/api/product.schema';
 import { ReviewItemsArraySchema } from '@/schemas/api/review.schema';
 import { apiServerGet } from '@/utils/api/apiServer';
+import isCurrentUserIdServer from '@/utils/isCurrentUserIdServer';
 
 export async function generateMetadata({
   params,
@@ -65,7 +66,7 @@ export default async function ProductDetailPage({
   const queryClient = new QueryClient();
 
   // 제품 상세 정보 prefetch
-  await queryClient.prefetchQuery({
+  const productResponse = await queryClient.fetchQuery({
     queryKey: queryKeys.products.detail(productId),
     queryFn: async () => {
       const response = await apiServerGet(productURL.detail(productId), {
@@ -86,11 +87,16 @@ export default async function ProductDetailPage({
     },
   });
 
+  const currentUserId = await isCurrentUserIdServer();
+  const productOwnerId = productResponse.owner?.user_id;
+
+  const isOwner = currentUserId !== null && currentUserId === productOwnerId;
+
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ProductDetailClient />
+      <ProductDetailClient isOwner={isOwner} />
     </HydrationBoundary>
   );
 }
