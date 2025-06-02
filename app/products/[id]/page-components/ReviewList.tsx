@@ -96,6 +96,7 @@ const ReviewList = ({
             <ReviewItem
               key={review.id}
               review={review}
+              productId={productId}
               productOwnerId={productOwnerId}
             />
           ))}

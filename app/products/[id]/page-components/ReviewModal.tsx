@@ -2,21 +2,56 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import useCreateReview from '@/hooks/mutation/useCreateReview';
+import useUpdateReview from '@/hooks/mutation/useUpdateReview';
 import { CreateReviewRequest } from '@/schemas/api/review.schema';
 
 interface ReviewModalProps {
   productId: string;
   isOpen: boolean;
   onClose: () => void;
+  initialReview?: {
+    id: number;
+    star: number;
+    content: string;
+  };
 }
 
-const ReviewModal = ({ productId, isOpen, onClose }: ReviewModalProps) => {
+const ReviewModal = ({
+  productId,
+  isOpen,
+  onClose,
+  initialReview,
+}: ReviewModalProps) => {
   const [reviewData, setReviewData] = useState<CreateReviewRequest>({
-    star: 5,
-    content: '',
+    star: initialReview?.star || 5,
+    content: initialReview?.content || '',
   });
+
+  // 원본 데이터 저장 (변경점 추적용)
+  const [originalData, setOriginalData] = useState<CreateReviewRequest | null>(
+    null
+  );
+
   const modalRef = useRef<HTMLDivElement>(null);
-  const { mutate: createReview, isPending } = useCreateReview();
+  const { mutate: createReview, isPending: isCreatePending } =
+    useCreateReview();
+  const { mutate: updateReview, isPending: isUpdatePending } =
+    useUpdateReview();
+
+  // initialReview가 변경될 때 reviewData와 originalData 업데이트
+  useEffect(() => {
+    if (initialReview) {
+      const data = {
+        star: initialReview.star,
+        content: initialReview.content,
+      };
+      setReviewData(data);
+      setOriginalData(data); // 원본 데이터 저장
+    } else {
+      setReviewData({ star: 5, content: '' });
+      setOriginalData(null); // 새 리뷰일 때는 원본 데이터 없음
+    }
+  }, [initialReview]);
 
   // 외부 클릭시 모달 닫기
   useEffect(() => {
@@ -55,6 +90,35 @@ const ReviewModal = ({ productId, isOpen, onClose }: ReviewModalProps) => {
     };
   }, [isOpen, onClose]);
 
+  // 변경된 필드만 추출하는 함수
+  const getChangedFields = (): Partial<CreateReviewRequest> => {
+    if (!originalData) {
+      return reviewData;
+    }
+
+    const changes: Partial<CreateReviewRequest> = {};
+
+    if (reviewData.star !== originalData.star) {
+      changes.star = reviewData.star;
+    }
+
+    if (reviewData.content !== originalData.content) {
+      changes.content = reviewData.content;
+    }
+
+    return changes;
+  };
+
+  // 변경사항이 있는지 확인하는 함수
+  const hasChanges = (): boolean => {
+    if (!originalData) return true;
+
+    return (
+      reviewData.star !== originalData.star ||
+      reviewData.content !== originalData.content
+    );
+  };
+
   const handleStarChange = (selectedStar: number) => {
     setReviewData({ ...reviewData, star: selectedStar });
   };
@@ -65,22 +129,68 @@ const ReviewModal = ({ productId, isOpen, onClose }: ReviewModalProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 내용이 비어있는지 확인
     if (reviewData.content.trim() === '') {
       return;
     }
 
-    createReview(
-      { productId, data: reviewData },
-      {
-        onSuccess: () => {
-          onClose();
-          setReviewData({ star: 5, content: '' });
-        },
+    // 수정 모드에서 변경사항이 없는 경우
+    if (initialReview?.id && !hasChanges()) {
+      onClose();
+      return;
+    }
+
+    if (initialReview?.id) {
+      // 리뷰 수정 - 변경된 필드만 전송
+      const changedFields = getChangedFields();
+
+      // 변경된 필드가 있을 때만 API 호출
+      if (Object.keys(changedFields).length > 0) {
+        updateReview(
+          {
+            reviewId: initialReview.id,
+            data: changedFields, // 변경된 필드만 전송
+          },
+          {
+            onSuccess: () => {
+              onClose();
+              setReviewData({ star: 5, content: '' });
+              setOriginalData(null);
+            },
+          }
+        );
+      } else {
+        // 변경사항이 없으면 모달만 닫기
+        onClose();
       }
-    );
+    } else {
+      // 리뷰 생성 - 전체 데이터 전송
+      createReview(
+        { productId, data: reviewData },
+        {
+          onSuccess: () => {
+            onClose();
+            setReviewData({ star: 5, content: '' });
+            setOriginalData(null);
+          },
+        }
+      );
+    }
   };
 
   if (!isOpen) return null;
+
+  const isPending = initialReview?.id ? isUpdatePending : isCreatePending;
+  const isModified = initialReview?.id ? hasChanges() : true;
+
+  const submitButtonText = initialReview?.id
+    ? isPending
+      ? '수정 중...'
+      : '리뷰 수정'
+    : isPending
+    ? '제출 중...'
+    : '리뷰 등록';
 
   return (
     <div className='fixed inset-0 bg-bgDark bg-opacity-75 flex items-center justify-center z-50 px-4'>
@@ -89,7 +199,9 @@ const ReviewModal = ({ productId, isOpen, onClose }: ReviewModalProps) => {
         className='bg-bgLight border border-border rounded-lg shadow-xl max-w-lg w-full p-6 md:p-8'
       >
         <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-xl font-semibold text-textLight'>리뷰 작성</h2>
+          <h2 className='text-xl font-semibold text-textLight'>
+            {initialReview?.id ? '리뷰 수정' : '리뷰 작성'}
+          </h2>
           <button
             onClick={onClose}
             className='text-textDim hover:text-textLight transition-colors'
@@ -169,14 +281,20 @@ const ReviewModal = ({ productId, isOpen, onClose }: ReviewModalProps) => {
             </button>
             <button
               type='submit'
-              disabled={isPending || reviewData.content.trim() === ''}
+              disabled={
+                isPending ||
+                reviewData.content.trim() === '' ||
+                (Boolean(initialReview?.id) && !isModified)
+              }
               className={`px-4 py-2 bg-active text-white rounded-md hover:bg-opacity-90 transition-colors ${
-                isPending || reviewData.content.trim() === ''
+                isPending ||
+                reviewData.content.trim() === '' ||
+                (initialReview?.id && !isModified)
                   ? 'opacity-50 cursor-not-allowed'
                   : ''
               }`}
             >
-              {isPending ? '제출 중...' : '리뷰 등록'}
+              {submitButtonText}
             </button>
           </div>
         </form>
