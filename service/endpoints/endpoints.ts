@@ -34,8 +34,6 @@ export const reviewURL = {
     `${CURRENT_API_VERSION}/reviews/${productId}`,
   create: (productId: string) => `${CURRENT_API_VERSION}/reviews/${productId}`,
   update: () => `${CURRENT_API_VERSION}/reviews`,
-  updateById: (reviewId: number) =>
-    `${CURRENT_API_VERSION}/reviews/${reviewId}`,
   delete: () => `${CURRENT_API_VERSION}/reviews`,
 };
 
