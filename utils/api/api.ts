@@ -136,8 +136,8 @@ const handleResponse = async <R>(
   }
 ): Promise<R> => {
   try {
-    // 204, 201 등 특수 상태 코드 처리
-    if (res.status === 204 || res.status === 201) {
+    // 204코드 처리
+    if (res.status === 204) {
       return {} as R;
     }
 

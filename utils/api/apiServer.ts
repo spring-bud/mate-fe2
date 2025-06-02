@@ -28,7 +28,7 @@ const parseResponseData = async (res: Response) => {
     throw new Error(ErrorMessage.INTERNAL_SERVER_ERROR);
   }
 
-  if (contentType.includes('application/json')) {
+  if (contentType.includes('json')) {
     return res.json();
   }
 

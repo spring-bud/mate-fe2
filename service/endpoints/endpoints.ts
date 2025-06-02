@@ -33,8 +33,8 @@ export const reviewURL = {
   byProductId: (productId: string) =>
     `${CURRENT_API_VERSION}/reviews/${productId}`,
   create: (productId: string) => `${CURRENT_API_VERSION}/reviews/${productId}`,
-  update: (reviewId: string) => `${CURRENT_API_VERSION}/reviews/${reviewId}`,
-  delete: (reviewId: string) => `${CURRENT_API_VERSION}/reviews/${reviewId}`,
+  update: () => `${CURRENT_API_VERSION}/reviews`,
+  delete: () => `${CURRENT_API_VERSION}/reviews`,
 };
 
 // 상품 관련 API 엔드포인트

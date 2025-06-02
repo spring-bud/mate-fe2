@@ -10,7 +10,7 @@ import useFreeLancerReview from '@/hooks/query/useFreeLancerReview';
 import useProductByFreeLancer from '@/hooks/query/usePrdouctByFreeLancer';
 import { useUserInfo } from '@/hooks/query/useUsersInfo';
 import { User } from '@/schemas/api/user.schema';
-import { LoginRequired } from '@/app/products/[id]/page-components/ReviewList';
+import LoginRequired from '@/app/products/[id]/page-components/LoginRequired';
 
 const UserProfileContainer = ({ userId }: { userId: string }) => {
   // isLoading 상태도 가져오기

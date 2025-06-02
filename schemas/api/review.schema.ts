@@ -4,6 +4,7 @@ import { z } from 'zod';
 const ReviewItemSchema = z.object({
   id: z.number(),
   star: z.number().min(0).max(5),
+  review_user_id: z.number(),
   content: z.string(),
   nickname: z.string().optional(),
   profile_url: z.string().url().optional(),
