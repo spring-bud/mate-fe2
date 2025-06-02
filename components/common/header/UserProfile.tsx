@@ -9,6 +9,7 @@ import {
   DropdownDivider,
 } from '@/components/ui/dropdown';
 import useLogout from '@/hooks/mutation/useLogout';
+import { useAuthStore } from '@/store/authStore';
 
 interface UserProfileProps {
   isLoggedIn: boolean;
@@ -22,6 +23,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   userImageUrl = '/assets/icons/default-avatar.png',
 }) => {
   const { mutateAsync: logout } = useLogout();
+  const { user } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -109,7 +111,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
         </DropdownItem>
 
         <DropdownItem
-          href='/dashboard'
+          href={`/user/${user?.user_id}`}
           icon={
             <svg
               className='w-4 h-4'
@@ -130,7 +132,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
         </DropdownItem>
 
         <DropdownItem
-          href='/settings'
+          href={`/setting`}
           icon={
             <svg
               className='w-4 h-4'
