@@ -5,13 +5,7 @@ import { ProductDetailResponse } from '@/hooks/query/useProductDetail';
 import Image from 'next/image';
 
 // 상품 상세 내용 컴포넌트
-const ProductContent = ({
-  product,
-  isOwner,
-}: {
-  product: ProductDetailResponse;
-  isOwner: boolean;
-}) => {
+const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
   const { content, product_tags, count, thumbnail_url } = product;
 
   const handleShare = () => {
