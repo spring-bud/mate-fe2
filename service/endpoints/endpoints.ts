@@ -12,6 +12,8 @@ export const authURL = {
 export const userURL = {
   info: (userId: string) => `${CURRENT_API_VERSION}/users/${userId}`,
   update: `${CURRENT_API_VERSION}/users`,
+  withdraw: `${CURRENT_API_VERSION}/users`,
+  withdrawType: `${CURRENT_API_VERSION}/users/reasontype`,
 };
 
 // 제안서 관련 API 엔드포인트
