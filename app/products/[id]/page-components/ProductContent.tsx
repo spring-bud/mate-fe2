@@ -3,10 +3,24 @@
 import React from 'react';
 import { ProductDetailResponse } from '@/hooks/query/useProductDetail';
 import Image from 'next/image';
+import useLikeProducts from '@/hooks/mutation/useLikeProducts';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/react-query/queryKeys';
+import { useParams } from 'next/navigation';
 
-// 상품 상세 내용 컴포넌트
 const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
-  const { content, product_tags, count, thumbnail_url } = product;
+  const params = useParams();
+  const productId = typeof params.id === 'string' ? params.id : '';
+  const queryClient = useQueryClient();
+
+  const cachedProduct =
+    queryClient.getQueryData<ProductDetailResponse>(
+      queryKeys.products.detail(productId)
+    ) || product; // 캐시가 없으면 props의 product 사용
+
+  const { content, product_tags, thumbnail_url, id } = cachedProduct;
+
+  const likeProductMutation = useLikeProducts();
 
   const handleShare = () => {
     navigator.clipboard
@@ -17,6 +31,10 @@ const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
       .catch((err) => {
         console.error('URL 복사 실패:', err);
       });
+  };
+
+  const handleLike = () => {
+    likeProductMutation.mutate({ productId: String(id) });
   };
 
   return (
@@ -80,20 +98,44 @@ const ProductContent = ({ product }: { product: ProductDetailResponse }) => {
           </button>
         </div>
         <div className='flex gap-2'>
-          <button className='flex items-center gap-1 px-3 py-1.5 bg-bgDark text-textPrimary rounded text-sm hover:bg-hover transition-colors'>
+          <button
+            onClick={handleLike}
+            disabled={likeProductMutation.isPending}
+            className={`flex items-center gap-1 px-3 py-1.5 bg-bgDark rounded text-sm hover:bg-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              cachedProduct.is_liked ? 'text-red-500' : 'text-textPrimary'
+            }`}
+          >
+            {/* 좋아요 하트 */}
             <svg
               width='18'
               height='18'
               viewBox='0 0 24 24'
-              fill='none'
+              fill={cachedProduct.is_liked ? '#ef4444' : 'none'}
               xmlns='http://www.w3.org/2000/svg'
             >
               <path
                 d='M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z'
-                fill='#D4D4D4'
+                stroke={cachedProduct.is_liked ? '#ef4444' : '#D4D4D4'}
+                strokeWidth='2'
               />
             </svg>
-            좋아요 {count?.like_count || 0}
+            {/* 빨간색 좋아요 글자 */}
+            <span
+              className={
+                cachedProduct.is_liked ? 'text-red-500' : 'text-textPrimary'
+              }
+            >
+              {likeProductMutation.isPending ? '처리중...' : '좋아요'}{' '}
+              {/* 로딩 상태 표시 */}
+            </span>
+            {/* 좋아요 개수 - React Query 캐시에서 직접 가져옴 */}
+            <span
+              className={
+                cachedProduct.is_liked ? 'text-red-500' : 'text-textPrimary'
+              }
+            >
+              {cachedProduct.count?.like_count || 0}
+            </span>
           </button>
         </div>
       </div>
