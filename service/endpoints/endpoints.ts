@@ -47,6 +47,8 @@ export const productURL = {
   srch: `${CURRENT_API_VERSION}/products/srch`,
   byFreeLancer: (userId: string) =>
     `${CURRENT_API_VERSION}/products/users/${userId}`,
+  like: (productId: string) =>
+    `${CURRENT_API_VERSION}/products/like/${productId}`,
 };
 
 // 태그 관련 API 엔드포인트

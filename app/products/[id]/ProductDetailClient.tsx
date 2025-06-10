@@ -44,11 +44,21 @@ const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
   const params = useParams();
   const productId = typeof params.id === 'string' ? params.id : '';
 
-  const { data: product, error } = useProductDetail(productId);
+  const { data: product, error, isLoading } = useProductDetail(productId);
   const router = useRouter();
-
   const productDelete = useDeleteProducts();
 
+  // 로딩 상태 표시
+  if (isLoading) {
+    return (
+      <div className='flex flex-col items-center justify-center py-20'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-active'></div>
+        <p className='text-textDim mt-4'>상품 정보를 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  // 에러 또는 데이터 없음 상태
   if (error || !product) {
     return <ProductDetailErrorState />;
   }
@@ -73,7 +83,17 @@ const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
     );
 
     if (confirmDelete) {
-      productDelete.mutate(productId);
+      productDelete.mutate(productId, {
+        onSuccess: () => {
+          router.push('/products');
+        },
+        onError: (error: any) => {
+          alert(
+            '삭제 중 오류가 발생했습니다: ' +
+              (error?.message || '알 수 없는 오류')
+          );
+        },
+      });
     }
   };
 
@@ -90,6 +110,7 @@ const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
                 className='p-1.5 rounded-md text-textDim hover:text-textPrimary hover:bg-hover transition-colors'
                 aria-label='수정'
                 title='수정'
+                disabled={productDelete.isPending}
               >
                 <svg
                   width='20'
@@ -107,22 +128,27 @@ const ProductDetailClient = ({ isOwner }: { isOwner: boolean }) => {
               {/* 삭제 아이콘 */}
               <button
                 onClick={handleDelete}
-                className='p-1.5 rounded-md text-textDim hover:text-error hover:bg-hover transition-colors'
+                className='p-1.5 rounded-md text-textDim hover:text-error hover:bg-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                 aria-label='삭제'
                 title='삭제'
+                disabled={productDelete.isPending}
               >
-                <svg
-                  width='20'
-                  height='20'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    d='M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z'
-                    fill='currentColor'
-                  />
-                </svg>
+                {productDelete.isPending ? (
+                  <div className='animate-spin h-5 w-5 border-2 border-error border-t-transparent rounded-full'></div>
+                ) : (
+                  <svg
+                    width='20'
+                    height='20'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      d='M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z'
+                      fill='currentColor'
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           )}

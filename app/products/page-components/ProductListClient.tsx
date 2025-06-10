@@ -74,7 +74,7 @@ const ProductListClient = () => {
       params.set('title', searchParams2.title);
     }
 
-    router.push(`/products?${params.toString()}`);
+    router.push(`/products?${params.toString()}`, { scroll: false });
   }, [router, searchParams2]);
 
   // 검색 파라미터 변경 시 URL 업데이트

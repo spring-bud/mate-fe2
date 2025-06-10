@@ -36,7 +36,16 @@ export const getAccessToken = (): string | undefined => {
     ?.split('=')[1];
 };
 
-// 헤더 생성 함수
+// 🎯 특정 조건 체크 함수 - GET 요청이고 products detail URL인 경우
+const shouldUseCookieAuth = (method: string, path: string): boolean => {
+  return (
+    method === 'GET' &&
+    path.includes('/products/') &&
+    /\/products\/\d+$/.test(path)
+  );
+};
+
+// 기본 헤더 생성 함수 (Authorization 방식)
 export const getApiHeaders = (): Headers => {
   const headers = new Headers({
     'Content-Type': 'application/json',
@@ -46,6 +55,21 @@ export const getApiHeaders = (): Headers => {
   const accessToken = getAccessToken();
   if (accessToken) {
     headers.set('Authorization', `Bearer ${accessToken}`);
+  }
+
+  return headers;
+};
+
+// 쿠키 헤더 생성 함수 (특수한 경우용)
+export const getCookieHeaders = (): Headers => {
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+  });
+
+  // 액세스 토큰이 있으면 Cookie 헤더에 추가
+  const accessToken = getAccessToken();
+  if (accessToken) {
+    headers.set('Cookie', `access_token=${accessToken}`);
   }
 
   return headers;
@@ -291,8 +315,10 @@ export const apiClient = {
       const { params, schema, requestInit } = options || {};
       let fullPath = path;
 
-      // 요청 직전에 최신 헤더 가져오기
-      apiHeaders = getApiHeaders();
+      //  특정 조건일 때 쿠키 헤더 사용, 아니면 기본 헤더 사용
+      apiHeaders = shouldUseCookieAuth('GET', path)
+        ? getCookieHeaders() // 🍪 Cookie: access_token=...
+        : getApiHeaders(); // 🔑 Authorization: Bearer ...
 
       if (params) {
         const filteredParams: Record<string, string> = Object.fromEntries(

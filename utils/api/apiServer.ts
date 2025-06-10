@@ -7,6 +7,16 @@ import { createApiResponseSchema } from '@/schemas/api/generic.schema';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// 🎯 특정 조건 체크 함수 - GET 요청이고 products detail URL인 경우
+const shouldUseCookieAuth = (method: string, path: string): boolean => {
+  return (
+    method === 'GET' &&
+    path.includes('/products/') &&
+    /\/products\/\d+$/.test(path)
+  );
+};
+
+// 기본 서버 헤더 생성 함수 (Authorization 방식)
 const getServerApiHeaders = async (): Promise<Headers> => {
   const headers = new Headers({
     'Content-Type': 'application/json',
@@ -17,6 +27,22 @@ const getServerApiHeaders = async (): Promise<Headers> => {
 
   if (accessToken) {
     headers.set('Authorization', `Bearer ${accessToken}`);
+  }
+
+  return headers;
+};
+
+// 서버용 쿠키 헤더 생성 함수 (특수한 경우용)
+const getServerCookieHeaders = async (): Promise<Headers> => {
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+  });
+
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access_token')?.value;
+
+  if (accessToken) {
+    headers.set('Cookie', `access_token=${accessToken}`);
   }
 
   return headers;
@@ -96,7 +122,10 @@ export const apiServerGet = async <R>(
   const { params, schema } = options || {};
   let fullPath = path;
 
-  const apiHeaders = await getServerApiHeaders();
+  // 🔍 특정 조건일 때 쿠키 헤더 사용, 아니면 기본 헤더 사용
+  const apiHeaders = shouldUseCookieAuth('GET', path)
+    ? await getServerCookieHeaders() // 🍪 Cookie: access_token=...
+    : await getServerApiHeaders(); // 🔑 Authorization: Bearer ...
 
   if (params) {
     const queryString = new URLSearchParams(
@@ -129,6 +158,8 @@ export const apiServerPost = async <R, P = any>(
   }
 ): Promise<R> => {
   const { params, schema } = options || {};
+
+  // POST 요청은 항상 기본 Authorization 헤더 사용
   const apiHeaders = await getServerApiHeaders();
 
   let body;
