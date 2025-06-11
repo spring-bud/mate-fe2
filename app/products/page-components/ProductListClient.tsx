@@ -22,6 +22,10 @@ const ProductListClient = () => {
   const observerRef = useRef<HTMLDivElement>(null);
   const [showMobileTagFilter, setShowMobileTagFilter] = useState(false);
 
+  // 사용자 액션 추적
+  const isUserAction = useRef(false);
+  const initialMount = useRef(true);
+
   // URL 파라미터에서 초기 검색 조건 설정
   const [searchParams2, setSearchParams] = useState<ProductSearchBody>({
     category:
@@ -36,10 +40,12 @@ const ProductListClient = () => {
     page: 0,
   });
 
-  // 검색 파라미터 변경될 때마다 콘솔에 출력 (디버깅용)
+  // 브라우저 스크롤 복원 활성화
   useEffect(() => {
-    console.log('Current search params (payload):', searchParams2);
-  }, [searchParams2]);
+    if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'auto';
+    }
+  }, []);
 
   // 인기 태그 가져오기
   const { data: popularTags = [] } = usePopularTags();
@@ -54,33 +60,29 @@ const ProductListClient = () => {
     isError,
   } = useProductSearch(searchParams2);
 
-  // URL 파라미터 업데이트 함수
-  const updateUrlParams = useCallback(() => {
+  // URL 파라미터 업데이트 함수 (사용자 액션일 때만)
+  const updateUrlParams = useCallback((updatedParams: ProductSearchBody) => {
     const params = new URLSearchParams();
 
-    if (searchParams2.category) {
-      params.set('category', searchParams2.category);
+    if (updatedParams.category) {
+      params.set('category', updatedParams.category);
     }
 
-    if (searchParams2.sort) {
-      params.set('sort', searchParams2.sort);
+    if (updatedParams.sort) {
+      params.set('sort', updatedParams.sort);
     }
 
-    if (Array.isArray(searchParams2.tag) && searchParams2.tag.length > 0) {
-      params.set('tag', searchParams2.tag.join(','));
+    if (Array.isArray(updatedParams.tag) && updatedParams.tag.length > 0) {
+      params.set('tag', updatedParams.tag.join(','));
     }
 
-    if (searchParams2.title) {
-      params.set('title', searchParams2.title);
+    if (updatedParams.title) {
+      params.set('title', updatedParams.title);
     }
 
-    router.push(`/products?${params.toString()}`, { scroll: false });
-  }, [router, searchParams2]);
-
-  // 검색 파라미터 변경 시 URL 업데이트
-  useEffect(() => {
-    updateUrlParams();
-  }, [searchParams2, updateUrlParams]);
+    const newUrl = `/products?${params.toString()}`;
+    window.history.pushState(null, '', newUrl);
+  }, []);
 
   // 무한 스크롤 처리
   useEffect(() => {
@@ -107,26 +109,23 @@ const ProductListClient = () => {
 
   // 카테고리 변경 핸들러
   const handleCategoryChange = (category: string) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      category,
-    }));
+    const updatedParams = { ...searchParams2, category };
+    setSearchParams(updatedParams);
+    updateUrlParams(updatedParams); // 즉시 URL 업데이트
   };
 
   // 정렬 옵션 변경 핸들러
   const handleSortChange = (sort: string) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      sort,
-    }));
+    const updatedParams = { ...searchParams2, sort };
+    setSearchParams(updatedParams);
+    updateUrlParams(updatedParams); // 즉시 URL 업데이트
   };
 
   // 검색어 변경 핸들러
   const handleSearchChange = (title: string) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      title,
-    }));
+    const updatedParams = { ...searchParams2, title };
+    setSearchParams(updatedParams);
+    updateUrlParams(updatedParams); // 즉시 URL 업데이트
   };
 
   // 태그 추가 핸들러
@@ -134,10 +133,16 @@ const ProductListClient = () => {
     if (!Array.isArray(searchParams2.tag) || searchParams2.tag.includes(tag))
       return;
 
-    setSearchParams((prev) => ({
-      ...prev,
-      tag: [...(Array.isArray(prev.tag) ? prev.tag : []), tag],
-    }));
+    const updatedParams = {
+      ...searchParams2,
+      tag: [
+        ...(Array.isArray(searchParams2.tag) ? searchParams2.tag : []),
+        tag,
+      ],
+    };
+
+    setSearchParams(updatedParams);
+    updateUrlParams(updatedParams); // 즉시 URL 업데이트
 
     // 모바일에서 태그 추가 후 자동으로 태그 필터 닫기 (UX 개선)
     if (window.innerWidth < 1024) {
@@ -149,10 +154,15 @@ const ProductListClient = () => {
   const handleTagRemove = (tag: string) => {
     if (!Array.isArray(searchParams2.tag)) return;
 
-    setSearchParams((prev) => ({
-      ...prev,
-      tag: Array.isArray(prev.tag) ? prev.tag.filter((t) => t !== tag) : [],
-    }));
+    const updatedParams = {
+      ...searchParams2,
+      tag: Array.isArray(searchParams2.tag)
+        ? searchParams2.tag.filter((t) => t !== tag)
+        : [],
+    };
+
+    setSearchParams(updatedParams);
+    updateUrlParams(updatedParams); // 즉시 URL 업데이트
   };
 
   // 모든 제품 목록 데이터 병합
