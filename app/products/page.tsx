@@ -29,48 +29,48 @@ export const metadata: Metadata = {
 export default async function ProductsPage() {
   const queryClient = new QueryClient();
 
-  // 인기 태그 미리 불러오기
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.tag.mostTag(),
-    queryFn: async () => {
-      const response = await apiClient.get(tagURL.mostTag, {
-        schema: PopularTagsResponseSchema,
-      });
-      return response;
-    },
-  });
+  // // 인기 태그 미리 불러오기
+  // await queryClient.prefetchQuery({
+  //   queryKey: queryKeys.tag.mostTag(),
+  //   queryFn: async () => {
+  //     const response = await apiClient.get(tagURL.mostTag, {
+  //       schema: PopularTagsResponseSchema,
+  //     });
+  //     return response;
+  //   },
+  // });
 
-  // 초기 제품 목록 미리 불러오기
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: queryKeys.products.list(INITIAL_SEARCH_PARAMS),
-    queryFn: async ({ pageParam = 0 }) => {
-      const response = await apiClient.post(productURL.srch, {
-        params: {
-          ...INITIAL_SEARCH_PARAMS,
-          page: pageParam,
-          size: 4,
-        },
-        schema: ProductListResponseSchema,
-      });
+  // // 초기 제품 목록 미리 불러오기
+  // await queryClient.prefetchInfiniteQuery({
+  //   queryKey: queryKeys.products.list(INITIAL_SEARCH_PARAMS),
+  //   queryFn: async ({ pageParam = 0 }) => {
+  //     const response = await apiClient.post(productURL.srch, {
+  //       params: {
+  //         ...INITIAL_SEARCH_PARAMS,
+  //         page: pageParam,
+  //         size: 4,
+  //       },
+  //       schema: ProductListResponseSchema,
+  //     });
 
-      const {
-        content = [],
-        current_page = 0,
-        has_next = false,
-      } = response || {};
+  //     const {
+  //       content = [],
+  //       current_page = 0,
+  //       has_next = false,
+  //     } = response || {};
 
-      return {
-        items: content,
-        current_page,
-        has_next,
-      };
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage: PageData | undefined) => {
-      if (!lastPage) return undefined;
-      return lastPage.has_next ? lastPage.current_page + 1 : undefined;
-    },
-  });
+  //     return {
+  //       items: content,
+  //       current_page,
+  //       has_next,
+  //     };
+  //   },
+  //   initialPageParam: 0,
+  //   getNextPageParam: (lastPage: PageData | undefined) => {
+  //     if (!lastPage) return undefined;
+  //     return lastPage.has_next ? lastPage.current_page + 1 : undefined;
+  //   },
+  // });
 
   const dehydratedState = dehydrate(queryClient);
 
