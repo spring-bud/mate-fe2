@@ -22,9 +22,10 @@ const ProductListClient = () => {
   const observerRef = useRef<HTMLDivElement>(null);
   const [showMobileTagFilter, setShowMobileTagFilter] = useState(false);
 
-  // 사용자 액션 추적
-  const isUserAction = useRef(false);
-  const initialMount = useRef(true);
+  // 브라우저 스크롤 복원 즉시 활성화 (useEffect보다 빠름)
+  if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+    history.scrollRestoration = 'auto';
+  }
 
   // URL 파라미터에서 초기 검색 조건 설정
   const [searchParams2, setSearchParams] = useState<ProductSearchBody>({
@@ -39,13 +40,6 @@ const ProductListClient = () => {
     size: 4,
     page: 0,
   });
-
-  // 브라우저 스크롤 복원 활성화
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
-      history.scrollRestoration = 'auto';
-    }
-  }, []);
 
   // 인기 태그 가져오기
   const { data: popularTags = [] } = usePopularTags();
@@ -81,7 +75,7 @@ const ProductListClient = () => {
     }
 
     const newUrl = `/products?${params.toString()}`;
-    window.history.pushState(null, '', newUrl);
+    window.history.pushState(null, '', newUrl); // 스크롤 건드리지 않음
   }, []);
 
   // 무한 스크롤 처리
