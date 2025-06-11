@@ -55,28 +55,32 @@ const ProductListClient = () => {
   } = useProductSearch(searchParams2);
 
   // URL 파라미터 업데이트 함수 (사용자 액션일 때만)
-  const updateUrlParams = useCallback((updatedParams: ProductSearchBody) => {
-    const params = new URLSearchParams();
+  const updateUrlParams = useCallback(
+    (updatedParams: ProductSearchBody) => {
+      const params = new URLSearchParams();
 
-    if (updatedParams.category) {
-      params.set('category', updatedParams.category);
-    }
+      if (updatedParams.category) {
+        params.set('category', updatedParams.category);
+      }
 
-    if (updatedParams.sort) {
-      params.set('sort', updatedParams.sort);
-    }
+      if (updatedParams.sort) {
+        params.set('sort', updatedParams.sort);
+      }
 
-    if (Array.isArray(updatedParams.tag) && updatedParams.tag.length > 0) {
-      params.set('tag', updatedParams.tag.join(','));
-    }
+      if (Array.isArray(updatedParams.tag) && updatedParams.tag.length > 0) {
+        params.set('tag', updatedParams.tag.join(','));
+      }
 
-    if (updatedParams.title) {
-      params.set('title', updatedParams.title);
-    }
+      if (updatedParams.title) {
+        params.set('title', updatedParams.title);
+      }
 
-    const newUrl = `/products?${params.toString()}`;
-    window.history.pushState(null, '', newUrl); // 스크롤 건드리지 않음
-  }, []);
+      const newUrl = `/products?${params.toString()}`;
+      // Next.js router 사용 (가장 안정적)
+      router.push(newUrl, { scroll: false });
+    },
+    [router]
+  );
 
   // 무한 스크롤 처리
   useEffect(() => {
