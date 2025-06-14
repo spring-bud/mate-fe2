@@ -3,17 +3,21 @@ import ChatListItem from './ChatListItem';
 
 export interface ChatListItemData {
   id: number;
+  roomToken: string;
   profileUrl: string;
   nickname: string;
   productThumbnailUrl: string;
   productTitle: string;
   unreadCount: number;
+  lastMessage: string;
+  lastTime: string;
   selected?: boolean;
+  createdAt: number;
 }
 
 interface ChatListProps {
   items: ChatListItemData[];
-  onItemClick?: (id: number) => void;
+  onItemClick?: (id: number, roomToken: string) => void;
   selectedId?: number;
 }
 
@@ -26,7 +30,8 @@ const ChatList: React.FC<ChatListProps> = ({
   const sortedItems = [...items].sort((a, b) => {
     if (a.unreadCount > 0 && b.unreadCount === 0) return -1;
     if (a.unreadCount === 0 && b.unreadCount > 0) return 1;
-    return 0;
+    // 최신순(내림차순)
+    return b.createdAt - a.createdAt;
   });
 
   return (
@@ -39,8 +44,10 @@ const ChatList: React.FC<ChatListProps> = ({
           productThumbnailUrl={item.productThumbnailUrl}
           productTitle={item.productTitle}
           unreadCount={item.unreadCount}
+          lastMessage={item.lastMessage}
+          lastTime={item.lastTime}
           selected={item.id === selectedId}
-          onClick={() => onItemClick?.(item.id)}
+          onClick={() => onItemClick?.(item.id, item.roomToken)}
         />
       ))}
     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ChatListItemProps {
   profileUrl: string;
@@ -6,6 +7,8 @@ interface ChatListItemProps {
   productThumbnailUrl: string;
   productTitle: string;
   unreadCount: number;
+  lastMessage: string;
+  lastTime: string;
   selected?: boolean;
   onClick?: () => void;
 }
@@ -16,6 +19,8 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
   productThumbnailUrl,
   productTitle,
   unreadCount,
+  lastMessage,
+  lastTime,
   selected = false,
   onClick,
 }) => {
@@ -27,10 +32,12 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
       onClick={onClick}
     >
       {/* 프로필 이미지 */}
-      <img
+      <Image
         src={profileUrl}
         alt='상대방 프로필'
         className='w-12 h-12 rounded-full object-cover border border-border flex-shrink-0'
+        width={48}
+        height={48}
       />
       {/* 내용 */}
       <div className='flex-1 min-w-0 ml-3'>
@@ -47,16 +54,32 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         </div>
         <div className='flex items-center mt-1 space-x-2'>
           {/* product 썸네일 */}
-          <img
+          <Image
             src={productThumbnailUrl}
             alt='상품 썸네일'
             className='w-6 h-6 rounded object-cover border border-border flex-shrink-0'
+            width={24}
+            height={24}
           />
           {/* product 타이틀 */}
           <span className='text-xs text-textDim truncate max-w-[120px] xs:max-w-[60px] sm:max-w-[120px] md:max-w-[180px]'>
             {productTitle}
           </span>
         </div>
+        {/* 마지막 메시지와 시간 */}
+        {(lastMessage || lastTime) && (
+          <div className='flex items-center mt-1 text-xs text-textDim'>
+            <span className='truncate max-w-[120px]'>{lastMessage}</span>
+            {lastTime && (
+              <span className='ml-2'>
+                {new Date(lastTime).toLocaleTimeString('ko-KR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

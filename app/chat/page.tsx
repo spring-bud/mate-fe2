@@ -1,5 +1,5 @@
 import React from 'react';
-import ChatListPage from '@/components/ui/ChatListPage';
+import ChatListPage from '@/app/chat/page-components/ChatListPage';
 
 export default function ChatPage() {
   return <ChatListPage />;

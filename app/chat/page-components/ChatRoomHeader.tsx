@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ChatRoomHeaderProps {
   profileUrl: string;
@@ -33,11 +34,15 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
           />
         </svg>
       </button>
-      <img
-        src={profileUrl}
-        alt='상대방 프로필'
-        className='w-10 h-10 rounded-full object-cover border border-border flex-shrink-0'
-      />
+      {profileUrl ? (
+        <Image
+          src={profileUrl}
+          alt='상대방 프로필'
+          className='w-10 h-10 rounded-full object-cover border border-border flex-shrink-0'
+          width={40}
+          height={40}
+        />
+      ) : null}
       <div className='flex flex-col min-w-0 flex-1'>
         <span className='text-base font-semibold text-textLight truncate max-w-[160px] xs:max-w-[80px] sm:max-w-[160px] md:max-w-[220px]'>
           {nickname}

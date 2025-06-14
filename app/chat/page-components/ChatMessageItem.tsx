@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ChatMessageItemProps {
   message: string;
@@ -22,10 +23,12 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
       {!isMine && (
         <div className='flex flex-col items-center mr-2'>
           {senderProfileUrl && (
-            <img
+            <Image
               src={senderProfileUrl}
               alt={senderName || '상대방 프로필'}
               className='w-7 h-7 rounded-full object-cover border border-border mb-1'
+              width={28}
+              height={28}
             />
           )}
           {senderName && (

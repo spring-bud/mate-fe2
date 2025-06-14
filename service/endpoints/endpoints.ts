@@ -71,6 +71,8 @@ export const chatURL = {
   getRecentMessages: `${CURRENT_API_VERSION}/chat/roomToken/messages/recent`,
   getRoomList: `${CURRENT_API_VERSION}/chat/chatRoomList`,
   sendGreeting: `${CURRENT_API_VERSION}/chat/greet`,
+  getRecentMessage: (roomToken: string) =>
+    `${CURRENT_API_VERSION}/chat/${roomToken}/messages/recent`,
 };
 
 // 전체 URL 묶음 내보내기
