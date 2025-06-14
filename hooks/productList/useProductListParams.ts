@@ -7,11 +7,6 @@ const useProductListParams = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 브라우저 스크롤 복원 즉시 활성화 (useEffect보다 빠름)
-  if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
-    history.scrollRestoration = 'auto';
-  }
-
   // URL 파라미터에서 초기 검색 조건 설정
   const [searchParams2, setSearchParams] = useState<ProductSearchBody>({
     category:

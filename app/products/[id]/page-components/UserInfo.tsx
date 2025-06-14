@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductDetailResponse } from '@/hooks/query/useProductDetail';
+import { useRouter } from 'next/navigation';
+import useCreateChatRoom from '@/hooks/mutation/useCreateChatRoom';
 
 // 작성자 정보 표시 컴포넌트
 const UserInfo = ({
@@ -13,10 +15,39 @@ const UserInfo = ({
   isOwner: boolean;
 }) => {
   const { owner, product_tags, thumbnail_url } = product;
+  const router = useRouter();
+  const createChatRoom = useCreateChatRoom();
 
   // 채팅 시작 처리 함수
   const handleStartChat = async () => {
-    alert('아직 준비중입니다');
+    if (!window.confirm('채팅을 시작할까요?')) return;
+    try {
+      const res = await createChatRoom.mutateAsync(product.id.toString());
+      const roomToken = res.room_token;
+      // 인삿말 전송 (REST API로 대체)
+      const greeting = `안녕하세요 ${product.title}게시물 보고 연락드려요~`;
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pub/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('access_token='))
+              ?.split('=')[1]
+          }`,
+        },
+        body: JSON.stringify({
+          message: greeting,
+          type: 'TALK',
+          room_token: roomToken,
+        }),
+      });
+      router.push(`/chat/${roomToken}`);
+    } catch (e) {
+      console.log(e);
+      alert('채팅방 생성에 실패했습니다.');
+    }
   };
 
   return (

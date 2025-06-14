@@ -7,6 +7,7 @@ import UserProfile from './UserProfile';
 import MobileMenu from './MobileMenu';
 import { useAuthStore } from '@/store/authStore';
 import { AccessTokenPayload } from '@/schemas/api/auth.schema';
+import { useChatSocket } from '@/hooks/chat/useChatSocket';
 
 interface HeaderProps {
   initialUserInfo: AccessTokenPayload | null;
@@ -25,6 +26,14 @@ const Header: React.FC<HeaderProps> = ({ initialUserInfo }) => {
 
   const displayUser = user || initialUserInfo;
   const isLoggedIn = !!displayUser;
+
+  // useChatSocket을 항상 호출하되, isLoggedIn이 true일 때만 활성화
+  useChatSocket({
+    roomToken: '',
+    onMessage: () => {},
+    onConnect: () => {},
+    enabled: isLoggedIn,
+  });
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
