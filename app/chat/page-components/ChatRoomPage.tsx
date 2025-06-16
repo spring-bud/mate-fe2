@@ -8,6 +8,7 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/authStore';
 import ChatRoomHeader from './ChatRoomHeader';
 import ChatMessages, { ChatMessageData } from './ChatMessages';
@@ -32,17 +33,19 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
   headerInfo,
 }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const myUserId = user?.user_id;
 
-  // 채팅 내역 불러오기
-  const { data } = useChatMessages(roomToken);
+  // 채팅 내역 불러오기 - refetch 함수도 가져오기
+  const { data, refetch } = useChatMessages(roomToken);
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [hasNext, setHasNext] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
   // 중복 메시지 방지용 id Set
-  const messageIdSet = React.useRef<Set<string | number>>(new Set());
+  const messageIdSet = useRef<Set<string | number>>(new Set());
+  const optimisticMessages = useRef<Set<string | number>>(new Set());
 
   const chatListRef = useRef<HTMLDivElement>(null);
   const isPrepending = useRef(false);
@@ -68,32 +71,49 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
         senderProfileUrl: msg.sender_profile_url,
         senderName: msg.sender_name,
       }));
+
       setMessages(mapped);
       setHasNext(!!data.has_next);
-      // id Set 동기화
-      messageIdSet.current = new Set(mapped.map((m) => m.id));
+
+      // id Set 초기화
+      messageIdSet.current.clear();
+      optimisticMessages.current.clear();
+      mapped.forEach((m) => messageIdSet.current.add(m.id));
     }
   }, [data, myUserId]);
 
-  // 1. 첫 진입 시 하단 스크롤
+  // 🔥 페이지 진입/복귀 시 강제 동기화
   useEffect(() => {
-    if (chatListRef.current) {
+    const handleFocus = () => {
+      // 포커스 복귀 시 메시지 다시 불러오기
+      refetch();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // 페이지가 다시 보일 때 동기화
+        refetch();
+      }
+    };
+
+    // 🔥 페이지 진입 시 즉시 동기화
+    refetch();
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetch, roomToken]);
+
+  // 첫 진입 시 하단 스크롤
+  useEffect(() => {
+    if (chatListRef.current && messages.length > 0) {
       chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
     }
-  }, []);
-
-  // 2. messages append(신규 메시지) 시, 하단에 가까우면 자동 하단 이동
-  useLayoutEffect(() => {
-    if (!isPrepending.current && chatListRef.current) {
-      const container = chatListRef.current;
-      const nearBottom =
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        50;
-      if (nearBottom) {
-        container.scrollTop = container.scrollHeight;
-      }
-    }
-  }, [messages]);
+  }, [messages.length > 0]);
 
   // 더 불러오기 핸들러
   const handleLoadMore = async () => {
@@ -101,6 +121,7 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
     const container = chatListRef.current;
     const prevScrollHeight = container?.scrollHeight || 0;
     const prevScrollTop = container?.scrollTop || 0;
+
     try {
       setLoadingMore(true);
       const oldestId = messages[0].id;
@@ -110,6 +131,7 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
       const res = await apiClient.get(url, {
         schema: chatMessagesResponseSchema,
       });
+
       if (res?.messages) {
         const sorted = [...res.messages].sort(
           (a, b) =>
@@ -128,101 +150,82 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
           senderProfileUrl: msg.sender_profile_url,
           senderName: msg.sender_name,
         }));
+
         const toAdd = mapped.filter((m) => !messageIdSet.current.has(m.id));
-        isPrepending.current = true;
-        setMessages((prev) => [...toAdd, ...prev]);
-        mapped.forEach((m) => messageIdSet.current.add(m.id));
-        setHasNext(!!res.has_next);
-        // prepend 후 스크롤 위치 보정
-        setTimeout(() => {
-          if (container) {
-            const newScrollHeight = container.scrollHeight;
-            container.scrollTop =
-              newScrollHeight - prevScrollHeight + prevScrollTop;
-          }
-          isPrepending.current = false;
-        }, 20);
+
+        if (toAdd.length > 0) {
+          isPrepending.current = true;
+          setMessages((prev) => [...toAdd, ...prev]);
+          toAdd.forEach((m) => messageIdSet.current.add(m.id));
+          setHasNext(!!res.has_next);
+
+          // prepend 후 스크롤 위치 보정
+          setTimeout(() => {
+            if (container) {
+              const newScrollHeight = container.scrollHeight;
+              container.scrollTop =
+                newScrollHeight - prevScrollHeight + prevScrollTop;
+            }
+            isPrepending.current = false;
+          }, 20);
+        }
       }
     } finally {
       setLoadingMore(false);
     }
   };
 
-  // prepend 후 스크롤 위치 보정
-  useLayoutEffect(() => {
-    if (isPrepending.current) {
-      const container = chatListRef.current;
-      if (container) {
-        const newScrollHeight = container.scrollHeight;
-        container.scrollTop =
-          newScrollHeight -
-          (container.dataset.prevScrollHeight
-            ? Number(container.dataset.prevScrollHeight)
-            : 0) +
-          (container.dataset.prevScrollTop
-            ? Number(container.dataset.prevScrollTop)
-            : 0);
-        isPrepending.current = false;
-      }
-    }
-  }, [messages]);
-
-  // 새로운 메시지 도착/내가 보냄 → 항상 하단 스크롤
-  useLayoutEffect(() => {
-    if (!isPrepending.current && chatListRef.current) {
-      chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  // 웹소켓 메시지 수신 (중복 방지)
+  // 웹소켓 메시지 수신
   const handleReceive = useCallback(
     (msg: any) => {
-      // user 정보가 세팅되기 전이면 메시지 처리하지 않음
-      if (!myUserId) return;
-      if (msg.type === 'TALK') {
-        // id 중복 체크
-        const msgId =
-          msg.id ||
-          msg._id ||
-          msg.localId ||
-          msg.created_at ||
-          `ws-${Date.now()}`;
-        // 내 메시지이고, 같은 내용을 가진 optimistic 메시지가 있으면 교체(merge)
-        if (myUserId && msg.sender_id === myUserId) {
-          setMessages((prev) => {
-            // optimistic 메시지 찾기 (isMine, message, 시간 근사치)
-            const idx = prev.findIndex(
-              (m) =>
-                m.isMine &&
-                m.message === msg.message &&
-                // 1분 이내(60초) 시간차 허용
-                Math.abs(
-                  (new Date(m.time || 0).getTime() || 0) -
-                    (new Date(msg.created_at).getTime() || 0)
-                ) < 60000
-            );
-            if (idx !== -1) {
-              // 기존 optimistic 메시지 교체(merge)
-              const newArr = [...prev];
-              newArr[idx] = {
-                id: msgId,
-                message: msg.message,
-                isMine: true,
-                time: msg.created_at
-                  ? new Date(msg.created_at).toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : undefined,
-                senderProfileUrl: msg.sender_profile_url,
-                senderName: msg.sender_name,
-              };
-              // idSet도 갱신
-              messageIdSet.current.add(msgId);
-              return newArr;
-            }
-            // 없으면 기존 방식대로 추가
-            if (messageIdSet.current.has(msgId)) return prev;
+      if (!myUserId || msg.type !== 'TALK') return;
+
+      const msgId = msg.id || `ws-${Date.now()}-${Math.random()}`;
+
+      // 이미 처리된 메시지인지 확인
+      if (messageIdSet.current.has(msgId)) {
+        return;
+      }
+
+      // 내가 보낸 메시지인 경우 - 옵티미스틱 메시지와 병합
+      if (msg.sender_id === myUserId) {
+        setMessages((prev) => {
+          const optimisticIndex = prev.findIndex(
+            (m) =>
+              optimisticMessages.current.has(m.id) &&
+              m.message === msg.message &&
+              m.isMine
+          );
+
+          if (optimisticIndex !== -1) {
+            // 옵티미스틱 메시지를 실제 메시지로 교체
+            const newMessages = [...prev];
+            const oldId = newMessages[optimisticIndex].id;
+
+            newMessages[optimisticIndex] = {
+              id: msgId,
+              message: msg.message,
+              isMine: true,
+              time: msg.created_at
+                ? new Date(msg.created_at).toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : undefined,
+              senderProfileUrl: msg.sender_profile_url,
+              senderName: msg.sender_name,
+            };
+
+            // ID 관리 업데이트
+            optimisticMessages.current.delete(oldId);
+            messageIdSet.current.delete(oldId);
+            messageIdSet.current.add(msgId);
+
+            return newMessages;
+          }
+
+          // 옵티미스틱 메시지가 없으면 새로 추가
+          if (!messageIdSet.current.has(msgId)) {
             messageIdSet.current.add(msgId);
             return [
               ...prev,
@@ -240,18 +243,19 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
                 senderName: msg.sender_name,
               },
             ];
-          });
-          return;
-        }
-        // 상대 메시지 처리(중복 방지)
-        if (messageIdSet.current.has(msgId)) return;
+          }
+
+          return prev;
+        });
+      } else {
+        // 상대방이 보낸 메시지
         messageIdSet.current.add(msgId);
         setMessages((prev) => [
           ...prev,
           {
             id: msgId,
             message: msg.message,
-            isMine: myUserId ? msg.sender_id === myUserId : false,
+            isMine: false,
             time: msg.created_at
               ? new Date(msg.created_at).toLocaleTimeString('ko-KR', {
                   hour: '2-digit',
@@ -262,11 +266,12 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
             senderName: msg.sender_name,
           },
         ]);
-        // 필요시 서버 동기화
-        // refetch(); // 주석 해제시 서버와 강제 동기화
+
+        // 🔥 상대방 메시지 받으면 채팅방 리스트도 업데이트
+        queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
       }
     },
-    [myUserId]
+    [myUserId, queryClient]
   );
 
   // 웹소켓 연결
@@ -275,7 +280,7 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
     onMessage: handleReceive,
     onError: (err) => {
       if (window.location.pathname.startsWith('/chat')) {
-        console.log(err);
+        console.error('WebSocket error:', err);
         alert('채팅 서버와 연결이 끊어졌습니다.');
         router.push('/');
       }
@@ -283,14 +288,16 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
     enabled: !!myUserId && !!roomToken,
   });
 
-  // 메시지 전송 (optimistic update)
-  const handleSend = (msg: string) => {
-    if (!msg.trim()) return;
-    const now = new Date();
-    const tempId = `local-${now.getTime()}`;
-    setMessages((prev) => [
-      ...prev,
-      {
+  // 메시지 전송
+  const handleSend = useCallback(
+    (msg: string) => {
+      if (!msg.trim() || !myUserId) return;
+
+      const now = new Date();
+      const tempId = `optimistic-${Date.now()}-${Math.random()}`;
+
+      // 옵티미스틱 메시지 추가
+      const optimisticMessage: ChatMessageData = {
         id: tempId,
         message: msg,
         isMine: true,
@@ -300,36 +307,64 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
         }),
         senderProfileUrl: user?.user_url,
         senderName: user?.user_nickname,
-      },
-    ]);
-    messageIdSet.current.add(tempId);
-    sendMessage({
-      message: msg,
-      type: 'TALK',
-      room_token: roomToken,
-    });
-  };
+      };
 
-  const handleBack = () => {
+      setMessages((prev) => [...prev, optimisticMessage]);
+      messageIdSet.current.add(tempId);
+      optimisticMessages.current.add(tempId);
+
+      // 웹소켓으로 메시지 전송
+      sendMessage({
+        message: msg,
+        type: 'TALK',
+        room_token: roomToken,
+      });
+
+      // 🔥 메시지 전송 후 채팅방 리스트도 업데이트
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
+      }, 100);
+    },
+    [myUserId, user, sendMessage, roomToken, queryClient]
+  );
+
+  // 스크롤 관리
+  useLayoutEffect(() => {
+    if (!isPrepending.current && chatListRef.current) {
+      const container = chatListRef.current;
+      const nearBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight <
+        100;
+
+      if (nearBottom || messages.length > prevMessagesLength.current) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+    prevMessagesLength.current = messages.length;
+  }, [messages]);
+
+  // 🔥 뒤로가기 시 채팅방 리스트 강제 업데이트
+  const handleBack = useCallback(() => {
+    // 채팅방 리스트 캐시 무효화
+    queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
+
+    // 읽지 않은 메시지 수 초기화 (선택사항)
+    // queryClient.invalidateQueries({ queryKey: ['unread'] });
+
     router.back();
-  };
+  }, [router, queryClient]);
 
   const handleLeave = () => {
     alert('채팅방을 나가시겠습니까? (구현 필요)');
   };
 
-  useLayoutEffect(() => {
-    const container = chatListRef.current;
-    if (!container) return;
-    // 더 불러오기(위로 prepend) 아닐 때, messages append(길이 증가) 또는 최초 진입 시 무조건 하단 스크롤
-    if (
-      !isPrepending.current &&
-      messages.length >= prevMessagesLength.current
-    ) {
-      container.scrollTop = container.scrollHeight;
-    }
-    prevMessagesLength.current = messages.length;
-  }, [messages]);
+  // 🔥 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 떠날 때 채팅방 리스트 업데이트
+      queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
+    };
+  }, [queryClient]);
 
   return (
     <div className='fixed left-0 right-0 bottom-0 top-[65px] flex flex-col max-w-lg w-full mx-auto bg-bgDark text-textPrimary z-50'>

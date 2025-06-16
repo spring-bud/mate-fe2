@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws/init';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
 let globalStompClient: Client | null = null;
 
 interface UseMultiChatSocketProps {
