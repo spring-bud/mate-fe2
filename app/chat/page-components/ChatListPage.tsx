@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import ChatList from './ChatList';
 import useChatRoomList from '@/hooks/query/useChatRoomList';
 import useUnreadChatCount from '@/hooks/query/useUnreadChatCount';
-import { useRouter } from 'next/navigation';
 
 const ChatListPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
   const { data: roomList, refetch } = useChatRoomList();
   const { perRoom } = useUnreadChatCount();
   const router = useRouter();
@@ -32,12 +34,11 @@ const ChatListPage: React.FC = () => {
     });
   }, [roomList, perRoom]);
 
-  // 정렬: unreadCount > 0이 상단, 그 안에서는 createdAt(혹은 lastMessageTime) 내림차순
+  // 정렬: unreadCount > 0이 상단, 그 안에서는 createdAt 내림차순
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
       if (a.unreadCount > 0 && b.unreadCount === 0) return -1;
       if (a.unreadCount === 0 && b.unreadCount > 0) return 1;
-      // 최신순(내림차순)
       return b.createdAt - a.createdAt;
     });
   }, [items]);
@@ -47,13 +48,49 @@ const ChatListPage: React.FC = () => {
     router.push(`/chat/${roomToken}`);
   };
 
-  // 포커스 복귀 시 강제 동기화
+  // 🔥 페이지 포커스/방문 시 강제 동기화
   useEffect(() => {
     const handleFocus = () => {
       refetch(); // 채팅방 리스트 강제 동기화
+      queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
     };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refetch();
+        queryClient.invalidateQueries({ queryKey: ['chat', 'roomList'] });
+      }
+    };
+
+    // 🔥 페이지 로드 시 즉시 동기화
+    refetch();
+
     window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetch, queryClient]);
+
+  // 🔥 페이지 진입 시마다 동기화 (Next.js 라우팅 대응)
+  useEffect(() => {
+    // 컴포넌트 마운트 시 항상 최신 데이터 가져오기
+    refetch();
+    queryClient.invalidateQueries({ queryKey: ['chat'] });
+  }, []); // 빈 의존성 배열로 컴포넌트 마운트 시에만 실행
+
+  // 🔥 정기적 동기화 (선택사항 - 30초마다)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // 페이지가 보이는 상태일 때만 자동 동기화
+      if (!document.hidden) {
+        refetch();
+      }
+    }, 30000); // 30초마다
+
+    return () => clearInterval(interval);
   }, [refetch]);
 
   return (
@@ -61,7 +98,27 @@ const ChatListPage: React.FC = () => {
       {/* 상단 타이틀 */}
       <header className='sticky top-0 z-10 bg-bgDark border-b border-border px-4 py-3 flex items-center justify-center'>
         <h1 className='text-lg font-bold text-textLight'>채팅</h1>
+        {/* 🔥 수동 새로고침 버튼 추가 (선택사항) */}
+        <button
+          onClick={() => {
+            refetch();
+            queryClient.invalidateQueries({ queryKey: ['chat'] });
+          }}
+          className='ml-auto p-2 text-textDim hover:text-textLight transition-colors'
+          aria-label='새로고침'
+        >
+          <svg width='20' height='20' fill='none' viewBox='0 0 20 20'>
+            <path
+              stroke='currentColor'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='1.5'
+              d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+            />
+          </svg>
+        </button>
       </header>
+
       {/* 채팅 리스트 */}
       <main className='flex-1 overflow-y-auto px-2 py-2 max-w-lg w-full mx-auto'>
         <ChatList

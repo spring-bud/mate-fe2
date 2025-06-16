@@ -10,7 +10,7 @@ interface UseChatSocketProps {
   enabled?: boolean;
 }
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws/init';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
 
 // stomp.js 인스턴스 싱글턴 제거, useRef로 인스턴스별 관리
 // let globalStompClient: Client | null = null;
@@ -51,12 +51,7 @@ export function useChatSocket({
     }
     // 기존 stompClient 해제
     if (stompClientRef.current) {
-      try {
-        stompClientRef.current.deactivate();
-      } catch (e) {
-        console.log(e);
-        // 무시
-      }
+      stompClientRef.current.deactivate();
       stompClientRef.current = null;
     }
 
