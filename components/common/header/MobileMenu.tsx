@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import useChatBadge from '@/hooks/query/useChatBadge';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -14,10 +15,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const currentPath = pathname;
   const prevPathRef = useRef(pathname);
+  const hasUnread = useChatBadge();
 
   const navItems = [
     { href: '/products', label: 'Products' },
     { href: '/freelancer', label: 'Freelancer' },
+    { href: '/chat', label: 'Chat', badge: hasUnread },
     { href: '/help', label: 'Help' },
   ];
 
@@ -63,7 +66,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden'>
+    <div className='fixed inset-0 z-[9999] bg-black bg-opacity-50 md:hidden'>
       <div
         ref={menuRef}
         className='absolute right-0 top-0 h-full w-64 transform bg-white dark:bg-bgDark shadow-lg transition-transform duration-200 ease-in-out'
@@ -103,10 +106,22 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     currentPath.startsWith(item.href)
                       ? 'bg-active text-white'
                       : 'text-textPrimary hover:bg-hover dark:text-textLight'
-                  }`}
+                  } relative`}
                   onClick={onClose}
                 >
                   {item.label}
+                  {item.label === 'Chat' && item.badge && (
+                    <span
+                      className='absolute -top-2 -right-2 bg-red-500 rounded-full w-[12px] h-[12px] z-10'
+                      style={{
+                        minWidth: '12px',
+                        height: '12px',
+                        right: '-8px',
+                        top: '-6px',
+                        padding: 0,
+                      }}
+                    />
+                  )}
                 </Link>
               </li>
             ))}

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import useUnreadChatCount from '@/hooks/query/useUnreadChatCount';
 import useChatRoomList from '@/hooks/query/useChatRoomList';
+import useChatBadge from '@/hooks/query/useChatBadge';
 
 interface NavItemProps {
   href: string;
@@ -47,9 +48,10 @@ const Navigation: React.FC = () => {
   const currentPath = pathname;
   const { data: roomList } = useChatRoomList();
   const { perRoom } = useUnreadChatCount();
+  const hasUnread = useChatBadge();
 
   // 안읽은 채팅이 1개라도 있으면 true
-  const hasUnread =
+  const hasUnreadChat =
     Object.keys(perRoom).length > 0
       ? Object.values(perRoom).some((v) => v?.count > 0)
       : roomList
@@ -59,7 +61,7 @@ const Navigation: React.FC = () => {
   const navItems = [
     { href: '/products', label: 'Product' },
     { href: '/freelancer', label: 'Freelancer' },
-    { href: '/chat', label: 'Chat', badge: hasUnread ? true : undefined },
+    { href: '/chat', label: 'Chat', badge: hasUnread },
     { href: '/help', label: 'Help' },
   ];
 
