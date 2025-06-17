@@ -39,7 +39,16 @@ export default async function MyPage() {
   await queryClient.prefetchQuery({
     queryKey: queryKeys.users.detail(userId),
     queryFn: async () => {
-      return apiClient.get(userURL.info(userId), {});
+      const data = await apiServerGet(userURL.info(userId), {});
+      return data;
+    },
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.users.myLikeProducts(),
+    queryFn: async () => {
+      const data = await apiServerGet(userURL.myLikeProducts, {});
+      return data;
     },
   });
 
@@ -47,9 +56,10 @@ export default async function MyPage() {
   await queryClient.prefetchQuery({
     queryKey: queryKeys.proposals.mylist(),
     queryFn: async () => {
-      return apiServerGet(proposalURL.myList, {
+      const data = await apiServerGet(proposalURL.myList, {
         schema: proposalListResponseSchema,
       });
+      return data;
     },
   });
 

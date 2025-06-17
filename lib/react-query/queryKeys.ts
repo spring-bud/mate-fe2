@@ -14,6 +14,7 @@ export const queryKeys = {
     myInfo: () => [...queryKeys.users.all, 'myInfo'] as const,
     detail: (userId: string) => [...queryKeys.users.all, userId] as const,
     withdrawReasons: () => [...queryKeys.users.all, 'withdrawReasons'] as const,
+    myLikeProducts: () => [...queryKeys.users.all, 'myLikeProducts'] as const,
   },
 
   // 제안서 관련 쿼리 키
