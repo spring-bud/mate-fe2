@@ -93,7 +93,7 @@ const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
         </div>
 
         {/* 탭 컨텐츠 */}
-        <div className='p-4 sm:p-6 md:p-8'>
+        <div className='p-[10px] px-0 sm:p-6 md:p-8'>
           {activeTab === 'profile' && (
             <ProfileSection
               userData={userData as User}
