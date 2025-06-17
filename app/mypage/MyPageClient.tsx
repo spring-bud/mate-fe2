@@ -6,6 +6,7 @@ import ProfileSection from './page-components/ProfileSection';
 import ProposalList from './page-components/ProposalList';
 import LikedProducts from './page-components/LikedProducts';
 import { User } from '@/schemas/api/user.schema';
+import useMyLikeProducts from '@/hooks/query/useMyLikeProducts';
 
 interface MyPageClientProps {
   userId: string;
@@ -13,7 +14,6 @@ interface MyPageClientProps {
 
 const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
   const { data: userData, isLoading, error } = useUserInfo(userId);
-  console.log(userData);
 
   const [activeTab, setActiveTab] = useState<'profile' | 'proposals' | 'likes'>(
     'profile'
@@ -93,7 +93,7 @@ const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
         </div>
 
         {/* 탭 컨텐츠 */}
-        <div className='p-4 sm:p-6 md:p-8'>
+        <div className='p-[10px] px-0 sm:p-6 md:p-8'>
           {activeTab === 'profile' && (
             <ProfileSection
               userData={userData as User}

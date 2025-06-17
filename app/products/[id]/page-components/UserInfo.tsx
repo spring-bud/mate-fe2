@@ -140,14 +140,14 @@ const UserInfo = ({
       )}
 
       {/* 다른 프로젝트 섹션 */}
-      <div className='bg-sidebar border border-border rounded-lg p-5'>
+      {/* <div className='bg-sidebar border border-border rounded-lg p-5'>
         <h3 className='font-semibold text-base text-textLight mb-4'>
           다른 프로젝트
         </h3>
         <div className='text-textDim text-center py-8'>
           다른 프로젝트가 없습니다.
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

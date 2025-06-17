@@ -97,26 +97,28 @@ const ChatListPage: React.FC = () => {
     <div className='min-h-screen bg-bgDark text-textPrimary flex flex-col'>
       {/* 상단 타이틀 */}
       <header className='sticky top-0 z-10 bg-bgDark border-b border-border px-4 py-3 flex items-center justify-center'>
-        <h1 className='text-lg font-bold text-textLight'>채팅</h1>
-        {/* 🔥 수동 새로고침 버튼 추가 (선택사항) */}
-        <button
-          onClick={() => {
-            refetch();
-            queryClient.invalidateQueries({ queryKey: ['chat'] });
-          }}
-          className='ml-auto p-2 text-textDim hover:text-textLight transition-colors'
-          aria-label='새로고침'
-        >
-          <svg width='20' height='20' fill='none' viewBox='0 0 20 20'>
-            <path
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='1.5'
-              d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-            />
-          </svg>
-        </button>
+        <div className='max-w-lg w-full mx-auto flex items-center justify-between relative'>
+          <h1 className='text-lg font-bold text-textLight'>채팅</h1>
+          {/* 🔥 수동 새로고침 버튼 추가 (선택사항) */}
+          <button
+            onClick={() => {
+              refetch();
+              queryClient.invalidateQueries({ queryKey: ['chat'] });
+            }}
+            className='absolute right-0 p-2 text-textDim hover:text-textLight transition-colors'
+            aria-label='새로고침'
+          >
+            <svg width='20' height='20' fill='none' viewBox='0 0 20 20'>
+              <path
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='1.5'
+                d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+              />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {/* 채팅 리스트 */}

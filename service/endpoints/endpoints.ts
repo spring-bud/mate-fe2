@@ -14,6 +14,7 @@ export const userURL = {
   update: `${CURRENT_API_VERSION}/users`,
   withdraw: `${CURRENT_API_VERSION}/users`,
   withdrawType: `${CURRENT_API_VERSION}/users/reasontype`,
+  myLikeProducts: `${CURRENT_API_VERSION}/products/like/srch`,
 };
 
 // 제안서 관련 API 엔드포인트

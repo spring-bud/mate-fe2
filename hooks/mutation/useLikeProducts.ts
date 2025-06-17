@@ -70,6 +70,10 @@ const useLikeProducts = () => {
         queryKey: queryKeys.products.all,
         refetchType: 'none',
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.myLikeProducts(),
+        refetchType: 'none',
+      });
     },
 
     // 성공/실패와 관계없이 최종적으로 서버와 동기화 - 제거여부 파악필요
