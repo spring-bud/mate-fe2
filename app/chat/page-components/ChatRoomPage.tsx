@@ -367,7 +367,7 @@ const ChatRoomPage: React.FC<ChatRoomPageProps> = ({
   }, [queryClient]);
 
   return (
-    <div className='fixed left-0 right-0 bottom-0 top-[65px] flex flex-col max-w-lg w-full mx-auto bg-bgDark text-textPrimary z-50'>
+    <div className='fixed left-0 right-0 bottom-0 top-[65px] flex flex-col max-w-lg w-full mx-auto bg-bgDark text-textPrimary z-40'>
       <div className='sticky top-0 z-20 bg-bgDark flex-shrink-0'>
         <ChatRoomHeader
           profileUrl={headerInfo.profileUrl}

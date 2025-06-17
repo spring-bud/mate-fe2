@@ -8,6 +8,7 @@ import MobileMenu from './MobileMenu';
 import { useAuthStore } from '@/store/authStore';
 import { AccessTokenPayload } from '@/schemas/api/auth.schema';
 import { useChatSocket } from '@/hooks/chat/useChatSocket';
+import useChatBadge from '@/hooks/query/useChatBadge';
 
 interface HeaderProps {
   initialUserInfo: AccessTokenPayload | null;
@@ -16,6 +17,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ initialUserInfo }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, setUser } = useAuthStore();
+  const hasUnread = useChatBadge();
 
   // initialUserInfo로 스토어 초기화
   useEffect(() => {
@@ -59,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ initialUserInfo }) => {
 
           {/* Mobile Menu Button - visible only on mobile */}
           <button
-            className='ml-4 text-textDim hover:text-textPrimary md:hidden'
+            className='ml-4 text-textDim hover:text-textPrimary md:hidden relative'
             onClick={toggleMobileMenu}
             aria-label='Toggle menu'
           >
@@ -86,6 +88,18 @@ const Header: React.FC<HeaderProps> = ({ initialUserInfo }) => {
                 />
               )}
             </svg>
+            {hasUnread && (
+              <span
+                className='absolute -top-1 -right-1 bg-red-500 rounded-full w-[12px] h-[12px] z-20'
+                style={{
+                  minWidth: '12px',
+                  height: '12px',
+                  right: '-6px',
+                  top: '-6px',
+                  padding: 0,
+                }}
+              />
+            )}
           </button>
         </div>
       </div>
