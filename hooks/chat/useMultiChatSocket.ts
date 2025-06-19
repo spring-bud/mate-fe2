@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
+import { getAccessToken } from '@/utils/api/api';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
 let globalStompClient: Client | null = null;
@@ -77,12 +78,4 @@ export function useMultiChatSocket({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, roomTokens.join(','), enabled]);
-}
-
-function getAccessToken(): string | undefined {
-  if (typeof document === 'undefined') return undefined;
-  return document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('access_token='))
-    ?.split('=')[1];
 }

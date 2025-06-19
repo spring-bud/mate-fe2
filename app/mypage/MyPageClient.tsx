@@ -88,7 +88,7 @@ const MyPageClient: React.FC<MyPageClientProps> = ({ userId }) => {
             }`}
             onClick={() => handleTabChange('likes')}
           >
-            좋아요한 상품
+            좋아요
           </button>
         </div>
 
