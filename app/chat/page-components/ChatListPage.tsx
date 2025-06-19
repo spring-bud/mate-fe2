@@ -3,9 +3,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import ChatList from './ChatList';
 import useChatRoomList from '@/hooks/query/useChatRoomList';
 import useUnreadChatCount from '@/hooks/query/useUnreadChatCount';
+import ChatListItem from './ChatListItem';
 
 const ChatListPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -123,11 +123,22 @@ const ChatListPage: React.FC = () => {
 
       {/* 채팅 리스트 */}
       <main className='flex-1 overflow-y-auto px-2 py-2 max-w-lg w-full mx-auto'>
-        <ChatList
-          items={sortedItems}
-          selectedId={selectedId ?? undefined}
-          onItemClick={handleItemClick}
-        />
+        <div className='w-full flex flex-col gap-1'>
+          {sortedItems.map((item) => (
+            <ChatListItem
+              key={item.id}
+              profileUrl={item.profileUrl}
+              nickname={item.nickname}
+              productThumbnailUrl={item.productThumbnailUrl}
+              productTitle={item.productTitle}
+              unreadCount={item.unreadCount}
+              lastMessage={item.lastMessage}
+              lastTime={item.lastTime}
+              selected={item.id === selectedId}
+              onClick={() => handleItemClick(item.id, item.roomToken)}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );
