@@ -11,7 +11,7 @@ const LikedProducts: React.FC = () => {
   if (isLoading) {
     return (
       <div className='space-y-6'>
-        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 상품</h2>
+        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 Product</h2>
         <div className='flex justify-center items-center h-40'>
           <div className='text-textDim'>로딩 중...</div>
         </div>
@@ -22,7 +22,7 @@ const LikedProducts: React.FC = () => {
   if (error) {
     return (
       <div className='space-y-6'>
-        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 상품</h2>
+        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 Product</h2>
         <div className='flex justify-center items-center h-40'>
           <div className='text-textDim'>
             데이터를 불러오는 중 오류가 발생했습니다.
@@ -37,9 +37,9 @@ const LikedProducts: React.FC = () => {
   if (likedProducts.length === 0) {
     return (
       <div className='space-y-6'>
-        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 상품</h2>
+        <h2 className='typo-head2 text-textLight mb-4'>좋아요한 Product</h2>
         <div className='flex justify-center items-center h-40'>
-          <div className='text-textDim'>좋아요한 상품이 없습니다.</div>
+          <div className='text-textDim'>좋아요한 Product가 없습니다.</div>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ const LikedProducts: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <h2 className='typo-head2 text-textLight mb-4'>좋아요한 상품</h2>
+      <h2 className='typo-head2 text-textLight mb-4'>좋아요한 Product</h2>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {likedProducts.map((product: any) => (

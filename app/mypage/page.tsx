@@ -7,7 +7,6 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 import { getUserFromToken, isValidToken } from '@/utils/jwt';
-import apiClient from '@/utils/api/api';
 import { userURL, proposalURL } from '@/service/endpoints/endpoints';
 import { queryKeys } from '@/lib/react-query/queryKeys';
 import MyPageClient from './MyPageClient';
@@ -16,7 +15,7 @@ import { apiServerGet } from '@/utils/api/apiServer';
 
 export const metadata: Metadata = {
   title: '마이페이지 | MATE',
-  description: '내 프로필 정보, 제안서 및 좋아요한 상품을 관리하세요.',
+  description: '내 프로필 정보, 제안서 및 좋아요한 Product를 관리하세요.',
 };
 
 export default async function MyPage() {
