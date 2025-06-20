@@ -4,7 +4,12 @@ import { reissueResponseSchema } from './schemas/api/auth.schema';
 import { getTokenRemainingTime } from './utils/jwt';
 import { createApiResponseSchema } from './schemas/api/generic.schema';
 
-const PROTECTED_ROUTES = ['/products/create', '/products/edit/.*', '/mypage.*'];
+const PROTECTED_ROUTES = [
+  '/products/create',
+  '/products/edit/.*',
+  '/mypage.*',
+  '/chat',
+];
 
 export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token');
