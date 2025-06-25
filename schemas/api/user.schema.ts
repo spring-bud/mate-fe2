@@ -19,6 +19,7 @@ export const userSchema = z.object({
   github_url: z.string().url().nullable().optional(),
   blog_url: z.string().url().nullable().optional(),
   user_stacks: z.array(stackSchema),
+  info_active: z.boolean().optional(),
 });
 
 export type Stack = z.infer<typeof stackSchema>;

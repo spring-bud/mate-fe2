@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { TiptapEditor } from '@/components/common/tiptap';
 import useUploadImage from '@/hooks/mutation/useUploadImage';
 import { User } from '@/schemas/api/user.schema';
@@ -40,6 +40,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     resolver: zodResolver(userFormSchema),
   });
 
+  // 폼 값 실시간 감시
+  const watchedValues = useWatch({ control });
+
   const uploadImageMutation = useUploadImage();
   const [techStack, setTechStack] = useState<string>('');
   const [techStacks, setTechStacks] = useState<
@@ -47,6 +50,37 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   >(userData.user_stacks || []);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // info_active가 체크되었을 때 필수 필드 확인
+  const isInfoActiveChecked = watchedValues.info_active;
+  const checkRequiredFields = () => {
+    const missingFields = [];
+
+    if (!watchedValues.job_type || watchedValues.job_type.trim() === '') {
+      missingFields.push('직업');
+    }
+
+    if (
+      watchedValues.job_year === null ||
+      watchedValues.job_year === undefined ||
+      (typeof watchedValues.job_year === 'string' &&
+        watchedValues.job_year === '')
+    ) {
+      missingFields.push('경력');
+    }
+
+    if (!watchedValues.contact || watchedValues.contact.trim() === '') {
+      missingFields.push('연락처');
+    }
+
+    if (!techStacks || techStacks.length === 0) {
+      missingFields.push('기술 스택');
+    }
+
+    return missingFields;
+  };
+
+  const missingRequiredFields = checkRequiredFields();
 
   // 이미지 업로드 핸들러
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +227,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </div>
 
               <div className='space-y-2'>
-                <label className='block text-textLight typo-body2'>직업</label>
+                <label className='block text-textLight typo-body2'>
+                  직업{' '}
+                  {isInfoActiveChecked && <span className='text-error'>*</span>}
+                </label>
                 <input
                   type='text'
                   {...register('job_type')}
@@ -207,7 +244,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
               <div className='space-y-2'>
                 <label className='block text-textLight typo-body2'>
-                  경력(년)
+                  경력(년){' '}
+                  {isInfoActiveChecked && <span className='text-error'>*</span>}
                 </label>
                 <input
                   type='number'
@@ -236,7 +274,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
               <div className='space-y-2'>
                 <label className='block text-textLight typo-body2'>
-                  연락처
+                  연락처{' '}
+                  {isInfoActiveChecked && <span className='text-error'>*</span>}
                 </label>
                 <input
                   {...register('contact')}
@@ -280,9 +319,91 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
         </div>
 
+        {/* 정보 공개 설정 */}
+        <div className='mt-6 space-y-4'>
+          <h3 className='text-textLight typo-head3'>
+            프리랜서 페이지 노출 설정
+          </h3>
+          <div className='bg-bgDark p-4 rounded border border-border'>
+            <div className='flex items-center justify-between'>
+              <div className='flex flex-col'>
+                <label className='text-textLight typo-body2 font-medium'>
+                  프리랜서 페이지에 프로필 노출
+                </label>
+                <p className='text-textDim typo-caption1 mt-1'>
+                  프리랜서 검색 페이지에 내 프로필이 표시됩니다
+                </p>
+              </div>
+              <div className='flex items-center'>
+                <input
+                  type='checkbox'
+                  {...register('info_active')}
+                  className='w-[25px] h-8 text-active bg-gray-100 border-gray-300 rounded focus:ring-active focus:ring-2'
+                />
+              </div>
+            </div>
+
+            {/* 실시간 필수 필드 확인 안내 */}
+            {isInfoActiveChecked && missingRequiredFields.length > 0 && (
+              <div className='mt-3 bg-yellow-50 border border-yellow-200 rounded-md p-3'>
+                <div className='flex'>
+                  <div className='flex-shrink-0'>
+                    <svg
+                      className='h-4 w-4 text-yellow-400'
+                      viewBox='0 0 20 20'
+                      fill='currentColor'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </div>
+                  <div className='ml-2'>
+                    <p className='text-sm text-yellow-700'>
+                      프리랜서 등록 활성화를 위해 다음 항목들이 필요합니다:{' '}
+                      {missingRequiredFields.join(', ')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* validation 에러 메시지 표시 */}
+            {errors.info_active && (
+              <div className='mt-3 bg-red-50 border border-red-200 rounded-md p-3'>
+                <div className='flex'>
+                  <div className='flex-shrink-0'>
+                    <svg
+                      className='h-4 w-4 text-red-400'
+                      viewBox='0 0 20 20'
+                      fill='currentColor'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </div>
+                  <div className='ml-2'>
+                    <p className='text-sm text-red-700'>
+                      {errors.info_active.message}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* 기술 스택 관리 */}
         <div className='mt-6 space-y-4'>
-          <h3 className='text-textLight typo-head3'>기술 스택</h3>
+          <h3 className='text-textLight typo-head3'>
+            기술 스택{' '}
+            {isInfoActiveChecked && <span className='text-error'>*</span>}
+          </h3>
           <div className='flex flex-wrap gap-2 mb-4'>
             {techStacks.map((stack) => (
               <div
