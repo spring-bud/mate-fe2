@@ -21,6 +21,36 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
   const onSubmit = async (data: UserFormData) => {
     try {
+      // info_active가 true일 때 필수 필드 검증
+      if (data.info_active === true || data.info_active === 1) {
+        const missingFields = [];
+
+        if (!data.job_type || data.job_type.trim() === '') {
+          missingFields.push('직업');
+        }
+
+        if (data.job_year === null || data.job_year === undefined) {
+          missingFields.push('경력');
+        }
+
+        if (!data.contact || data.contact.trim() === '') {
+          missingFields.push('연락처');
+        }
+
+        if (!data.user_stacks || data.user_stacks.length === 0) {
+          missingFields.push('기술 스택');
+        }
+
+        if (missingFields.length > 0) {
+          alert(
+            `프리랜서 등록 활성화시 다음 항목들이 필수입니다: ${missingFields.join(
+              ', '
+            )}`
+          );
+          return;
+        }
+      }
+
       // 원본 데이터와 비교하여 변경된 필드만 추출
       const changedFields: Partial<User> = {};
       let hasChanges = false;
@@ -97,6 +127,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         hasChanges = true;
       }
 
+      // 정보 공개 설정 변경 확인
+      if (data.info_active !== (userData.info_active || false)) {
+        // boolean을 0/1로 변환해서 전송
+        changedFields.info_active = data.info_active ? 1 : (0 as any);
+        hasChanges = true;
+      }
+
       // 스택 변경 확인
       const originalStacks = userData.user_stacks || [];
       const newStacks = data.user_stacks || [];
@@ -118,16 +155,25 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         hasChanges = true;
       }
 
-      // 다른 필드를 변경하는 경우에도 user_stacks를 항상 포함시킴
-      if (hasChanges && !changedFields.user_stacks) {
+      // user_stacks를 항상 포함시킴 (변경되지 않은 경우에도)
+      if (!changedFields.user_stacks) {
         // 기존 스택 정보 유지
         changedFields.user_stacks = originalStacks.map(
           (stack) => stack.name
         ) as any;
       }
 
-      // 변경사항이 있을 때만 요청 보내기
-      if (hasChanges) {
+      // info_active를 항상 포함시킴 (변경되지 않은 경우에도)
+      if (!changedFields.hasOwnProperty('info_active')) {
+        changedFields.info_active = userData.info_active ? 1 : (0 as any);
+      }
+
+      // 변경사항이 있거나 필수 필드가 포함된 경우 요청 보내기
+      if (
+        hasChanges ||
+        changedFields.user_stacks ||
+        changedFields.hasOwnProperty('info_active')
+      ) {
         await updateUserMutation.mutateAsync(changedFields as User);
       } else {
         console.log('변경사항 없음');
@@ -136,6 +182,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       toggleEditMode();
     } catch (error) {
       console.error('프로필 업데이트 중 오류:', error);
+      // validation 에러는 폼에서 자동으로 처리됨
     }
   };
 

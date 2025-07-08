@@ -1,4 +1,5 @@
 import { ProductSearchBody } from '@/schemas/api/product.schema';
+import { FreeLancerSearchBody } from '@/schemas/api/freeLancer.schema';
 
 export const queryKeys = {
   // 인증 관련 쿼리 키
@@ -32,6 +33,22 @@ export const queryKeys = {
       [...queryKeys.reviews.all, 'freeLancer', userId] as const,
     byProduct: (productId: string) =>
       [...queryKeys.reviews.all, 'product', productId] as const,
+  },
+
+  // 프리랜서 관련 쿼리 키
+  freeLancer: {
+    all: ['freeLancer'] as const,
+    list: (body: FreeLancerSearchBody) =>
+      [
+        ...queryKeys.freeLancer.all,
+        'list',
+        body.jobtype ?? '',
+        body.nickname ?? '',
+        Array.isArray(body.tag) && body.tag.length > 0
+          ? body.tag.join(',')
+          : '',
+        body.size ?? 8,
+      ] as const,
   },
 
   // 상품 관련 쿼리 키

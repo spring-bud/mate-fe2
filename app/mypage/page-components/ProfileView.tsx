@@ -145,6 +145,66 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                         strokeLinecap='round'
                         strokeLinejoin='round'
                         strokeWidth={2}
+                        d='M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z'
+                      />
+                    </svg>
+                    프리랜서 페이지 노출 설정
+                  </h3>
+                  <div className='space-y-2'>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-textDim typo-caption1'>
+                        프리랜서 페이지 노출:
+                      </span>
+                      <div className='flex items-center gap-2'>
+                        <span
+                          className={`text-sm font-medium ${
+                            userData.info_active
+                              ? 'text-success'
+                              : 'text-textDim'
+                          }`}
+                        >
+                          {userData.info_active ? '노출' : '비노출'}
+                        </span>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            userData.info_active
+                              ? 'bg-success border-success'
+                              : 'bg-bgDark border-textDim'
+                          }`}
+                        >
+                          {userData.info_active && (
+                            <svg
+                              className='w-2 h-2 text-white'
+                              fill='currentColor'
+                              viewBox='0 0 8 8'
+                            >
+                              <path d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z' />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <p className='text-textDim typo-caption2 text-xs'>
+                      {userData.info_active
+                        ? '프리랜서 검색 페이지에서 내 프로필을 확인할 수 있습니다.'
+                        : '프리랜서 검색 페이지에 내 프로필이 표시되지 않습니다.'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='space-y-4 bg-bgLight p-4 rounded-md border border-border'>
+                  <h3 className='text-active typo-head4 flex items-center'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      className='h-4 w-4 mr-2'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
                         d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
                       />
                     </svg>
