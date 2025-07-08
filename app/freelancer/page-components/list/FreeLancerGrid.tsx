@@ -83,13 +83,6 @@ const FreeLancerGrid: React.FC<FreeLancerGridProps> = ({ freeLancers }) => {
                 )}
               </div>
 
-              {/* 소개 */}
-              {freeLancer.intro && (
-                <p className='text-textDim text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3'>
-                  {freeLancer.intro}
-                </p>
-              )}
-
               {/* 기술 스택 한줄에 모두 */}
               {freeLancer.user_stacks && freeLancer.user_stacks.length > 0 && (
                 <div className='flex flex-wrap gap-1'>
