@@ -17,6 +17,10 @@ export const userURL = {
   myLikeProducts: `${CURRENT_API_VERSION}/products/like/srch`,
 };
 
+export const freeLancerURL = {
+  search: `${CURRENT_API_VERSION}/users/freelancer/srch`,
+};
+
 // 제안서 관련 API 엔드포인트
 export const proposalURL = {
   myList: `${CURRENT_API_VERSION}/proposals`,
