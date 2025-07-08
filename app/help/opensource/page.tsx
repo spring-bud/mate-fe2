@@ -121,7 +121,7 @@ export default function OpensourcePage() {
 
         <div className='text-center mt-8'>
           <Link
-            href='https://github.com/mate-dev'
+            href='https://github.com/spring-bud'
             target='_blank'
             className='typo-button1 bg-info text-white px-6 py-3 rounded-lg hover:bg-hover transition-colors inline-block'
           >
