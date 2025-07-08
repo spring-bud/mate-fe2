@@ -66,7 +66,7 @@ const CategoriesSection = () => {
               프리랜서를 만나보세요.
             </p>
             <Link
-              href='/products?category=develop'
+              href='/products?category=DEVELOP&sort=CREATE'
               className='inline-flex items-center text-active hover:text-active hover:underline'
             >
               <span>개발자 찾아보기</span>
@@ -154,7 +154,7 @@ const CategoriesSection = () => {
               분야의 프리랜서를 만나보세요.
             </p>
             <Link
-              href='/products?category=design'
+              href='/products?category=DESIGN&sort=CREATE'
               className='inline-flex items-center text-active hover:text-active hover:underline'
             >
               <span>디자이너 찾아보기</span>
