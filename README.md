@@ -202,15 +202,17 @@ API Layer
 
 ### 1. API 버전 및 엔드포인트 관리
 
-**API 버전 관리**
+**API 버전 관리** - [📁 apiVersion.ts](./service/api-version/apiVersion.ts)
 
-**엔드포인트 중앙 관리**
+**엔드포인트 중앙 관리** - [📁 endpoints.ts](./service/endpoints/endpoints.ts)
 
 - 도메인별로 URL 그룹화 (auth, user, product, chat 등)
 - 동적 파라미터 지원 함수형 URL 생성
 - 타입 안전한 URL 구성
 
-### 2. 클라이언트 API 레이어
+### 2. API 레이어
+
+커스텀 HTTP 클라이언트 아키텍처 - [📁 API.README.md](./utils/api/README.md)
 
 **핵심 기능**
 
@@ -247,21 +249,12 @@ API Layer
 - API 응답 스키마 자동 검증
 - 제네릭을 활용한 재사용 가능한 API 클라이언트
 
-### 2. 토큰 관리
-
-```typescript
-// 토큰 재발급 큐잉 시스템
-let isRefreshing = false;
-let refreshPromise: Promise<string> | null = null;
-let failedQueue: Array<{ resolve; reject }> = [];
-```
-
-### 3. 환경별 최적화
+### 2. 환경별 최적화
 
 - **클라이언트**: 쿠키 기반 토큰 저장 및 자동 갱신
 - **서버**: Next.js cookies()를 통한 서버사이드 인증
 
-### 4. 에러 핸들링 전략
+### 3. 에러 핸들링 전략
 
 - **컴포넌트 레벨**: 각 컴포넌트에서 개별적인 에러 처리
 - **전역 에러**: 인증 만료 시 자동 로그인 페이지 이동
@@ -288,20 +281,21 @@ let failedQueue: Array<{ resolve; reject }> = [];
 <br>
 <br>
 
-## 🌐 배포
+## 🌐 CI/CD
 
-<div align="center">
+<div align="start">
 
-<br>
+**Vercel 자동 배포**로 운영 중입니다.
 
-현재 프로덕션 서버는 다음 주소에서 확인하실 수 있어요:
-<br>
+`main` 브랜치에 푸시하면 자동으로 배포되어 실시간으로 업데이트됩니다. MATE Front는 1인 개발로 별도의 CI/CD 파이프라인 없이 Vercel의 Git 연동 기능을 활용해 심플하게 관리하고 있습니다.
 
-**🔗 [MATE 플랫폼 바로가기](https://mate.springbud.site/)**
+**배포 링크:** [https://mate.springbud.site/](https://mate.springbud.site/)
 
-[![Website](https://img.shields.io/badge/Website-Live-brightgreen?style=for-the-badge&logo=vercel&logoColor=white)](https://mate.springbud.site/)
+### 배포 환경
 
-</div>
+- **플랫폼**: Vercel
+- **자동 배포**: GitHub `main` 브랜치 연동
+- **환경 변수**: Vercel Dashboard에서 관리
 
 <br>
 
